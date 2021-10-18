@@ -1,0 +1,10 @@
+# ETC
+**/.ipynb_checkpoints
+**/__pycache__
+
+# dataset
+input/data/*
+
+# output
+baseline_code/saved
+baseline_code/submission/*
