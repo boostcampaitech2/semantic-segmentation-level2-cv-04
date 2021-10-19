@@ -1,5 +1,5 @@
 _base_ = [
-    '../datasets/coco-dataset.py',
+    '../datasets/dataset.py',
     '../default_runtime.py',
     '../schedules/schedule_SGD.py'
 ]

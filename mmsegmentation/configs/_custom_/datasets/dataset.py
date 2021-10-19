@@ -1,9 +1,14 @@
 # dataset settings
-dataset_type = 'COCOStuffDataset'
-data_root = '../input/'
+dataset_type = 'CustomDataset'
+data_root = '../input/data/'
 
 # class settings
 classes = ['General trash', 'Paper', 'Paper pack', 'Metal', 'Glass', 'Plastic','Styrofoam', 'Plastic bag', 'Battery', 'Clothing']
+palette = [
+    [192, 0, 128], [0, 128, 192], [0, 128, 64],
+    [128, 0, 0], [64, 0, 128], [64, 0, 192],
+    [192, 128, 64], [192, 192, 128], [64, 64, 128], [128, 0, 192]
+    ]
 
 # set normalize value
 img_norm_cfg = dict(
@@ -40,22 +45,25 @@ data = dict(
     samples_per_gpu=4,
     workers_per_gpu=4,
     train=dict(
+        classes=classes,
+        palette=palette,
         type=dataset_type,
-        data_root=data_root,
-        reduce_zero_label=True,
+        reduce_zero_label=True, # reduce_zero_label : Class index에 background가 포함되는가 여부에 따라서 조절
         img_dir=data_root,
         ann_dir=data_root + 'train.json',
         pipeline=train_pipeline),
     val=dict(
+        classes=classes,
+        palette=palette,
         type=dataset_type,
-        data_root=data_root,
         reduce_zero_label=True,
         img_dir=data_root,
         ann_dir=data_root + 'val.json',
         pipeline=test_pipeline),
     test=dict(
+        classes=classes,
+        palette=palette,
         type=dataset_type,
-        data_root=data_root,
         reduce_zero_label=True,
         img_dir=data_root,
         ann_dir=data_root + 'test.json',
