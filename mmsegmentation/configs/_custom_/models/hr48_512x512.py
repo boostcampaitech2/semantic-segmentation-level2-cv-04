@@ -1,7 +1,7 @@
 _base_ = [
-    '../_custom_/datasets/coco-dataset.py',
-    '../_custom_/default_runtime.py',
-    '../_custom_/schedules/schedule_SGD.py'
+    '../datasets/coco-dataset.py',
+    '../default_runtime.py',
+    '../schedules/schedule_SGD.py'
 ]
 
 # model settings

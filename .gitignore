@@ -8,9 +8,11 @@ input/data/*
 # output
 baseline_code/saved
 baseline_code/submission/*
+output
 
 # mmsegmentation
 mmsegmentation/*
 !mmsegmentation/configs
 mmsegmentation/configs/*
 !mmsegmentation/configs/_custom_
+!mmsegmentation/train.sh

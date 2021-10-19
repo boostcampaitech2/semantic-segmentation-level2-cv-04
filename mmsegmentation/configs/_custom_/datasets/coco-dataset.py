@@ -1,6 +1,6 @@
 # dataset settings
 dataset_type = 'COCOStuffDataset'
-data_root = '../input/data/'
+data_root = '../input/'
 
 # class settings
 classes = ['General trash', 'Paper', 'Paper pack', 'Metal', 'Glass', 'Plastic','Styrofoam', 'Plastic bag', 'Battery', 'Clothing']
