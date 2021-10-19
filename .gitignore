@@ -1,6 +1,9 @@
 # ETC
 **/.ipynb_checkpoints
 **/__pycache__
+**/._**
+._**
+.DS_**
 
 # dataset
 input/data/*
@@ -8,3 +11,5 @@ input/data/*
 # output
 baseline_code/saved
 baseline_code/submission/*
+
+baseline_code___/*
