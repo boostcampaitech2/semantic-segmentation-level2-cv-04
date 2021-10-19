@@ -4,6 +4,8 @@
 
 # dataset
 input/data/*
+input/mmseg
+!input/data/image_reroute.py
 
 # output
 baseline_code/saved
