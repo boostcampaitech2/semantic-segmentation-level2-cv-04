@@ -1,6 +1,6 @@
 # dataset settings
 dataset_type = 'CustomDataset'
-data_root = '../input/data/'
+data_root = '/opt/ml/segmentation/input/mmseg/'
 
 # class settings
 classes = ['General trash', 'Paper', 'Paper pack', 'Metal', 'Glass', 'Plastic','Styrofoam', 'Plastic bag', 'Battery', 'Clothing']
@@ -50,7 +50,7 @@ data = dict(
         type=dataset_type,
         reduce_zero_label=True, # reduce_zero_label : Class index에 background가 포함되는가 여부에 따라서 조절
         img_dir=data_root,
-        ann_dir=data_root + 'train.json',
+        ann_dir=data_root,
         pipeline=train_pipeline),
     val=dict(
         classes=classes,
@@ -58,7 +58,7 @@ data = dict(
         type=dataset_type,
         reduce_zero_label=True,
         img_dir=data_root,
-        ann_dir=data_root + 'val.json',
+        ann_dir=data_root,
         pipeline=test_pipeline),
     test=dict(
         classes=classes,
@@ -66,5 +66,5 @@ data = dict(
         type=dataset_type,
         reduce_zero_label=True,
         img_dir=data_root,
-        ann_dir=data_root + 'test.json',
+        ann_dir=data_root,
         pipeline=test_pipeline))
