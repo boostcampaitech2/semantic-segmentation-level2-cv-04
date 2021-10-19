@@ -9,5 +9,6 @@ input/data/*
 baseline_code/saved
 baseline_code/submission/*
 
-# HRnet
-HRnet
+# mmsegmentation
+mmsegmentation/*
+!mmsegmentation/configs/_custom_
