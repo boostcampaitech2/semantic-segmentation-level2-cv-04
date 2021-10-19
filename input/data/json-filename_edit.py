@@ -9,30 +9,25 @@ TESTJSON = os.path.join(DATAROOT,"test.json")
 '''
 Edit file name as img id
 '''
-def _edit_file_name(json_dir, imagePath):
-    with open(json_dir, "r", encoding="utf8") as outfile:
-        data = json.load(outfile)
-        data["file_name"] = f"{data['id']:04}.jpg"
+def _edit_file_name(json_dir, annotationPath):
 
-    with open(imagePath, "w") as new_file:
-        json.dump(data, new_file, indent='\t')
+	with open(json_dir, "r", encoding="utf8") as outfile:
+		datas = json.load(outfile)
 
-'''
-Make dir
-'''
-def _make_directory(paths):
-	for path in paths:
-		os.makedirs(path, exist_ok=True)
+		for data in datas["images"]:
+			data["file_name"] = f"{data['id']:04}.jpg"
 
+	with open(annotationPath+"/edit.json", "w") as new_file:
+		json.dump(datas, new_file, indent='\t')
 
 '''
 Wrap func
 '''
-def make(json,path):
-	imagePath = '../mmseg/annotations/'+path
+def make(json, path):
+	annotationPath = '../mmseg/annotations/'+path
 
-	_make_directory(imagePath)
-	_edit_file_name(json,imagePath)
+	os.makedirs(annotationPath, exist_ok=True)
+	_edit_file_name(json, annotationPath)
 
 
 '''
@@ -43,3 +38,7 @@ def __main__():
 	make(TRAINJSON, 'training')
 	make(VALIDJSON, 'validation')
 	make(TESTJSON, 'test')
+
+	
+if __name__=='__main__':
+	__main__()

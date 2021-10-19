@@ -22,20 +22,12 @@ def _rename_images(json_dir, image_dir):
 		shutil.copyfile(os.path.join(image_data['file_name']), os.path.join(image_dir,f"{image_data['id']:04}.jpg"))
 
 '''
-Make dir
-'''
-def _make_directory(paths):
-	for path in paths:
-		os.makedirs(path, exist_ok=True)
-
-
-'''
 Wrap func
 '''
 def make(json,path):
 	imagePath = '../mmseg/images/'+path
 
-	_make_directory(imagePath)
+	os.makedirs(imagePath, exist_ok=True)
 	_rename_images(json,imagePath)
 
 
