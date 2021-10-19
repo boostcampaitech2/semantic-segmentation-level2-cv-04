@@ -11,4 +11,6 @@ baseline_code/submission/*
 
 # mmsegmentation
 mmsegmentation/*
+!mmsegmentation/configs
+mmsegmentation/configs/*
 !mmsegmentation/configs/_custom_
