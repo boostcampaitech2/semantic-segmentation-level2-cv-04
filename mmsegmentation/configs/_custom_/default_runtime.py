@@ -6,12 +6,12 @@ log_config = dict(
         dict(type='TextLoggerHook', by_epoch=False),
         # dict(type='TensorboardLoggerHook')
         # Wandb Logger Hook
-        # dict(type='WandbLoggerHook',
-        #     init_kwargs=dict(
-        #         project='project',
-        #         entity='entity',
-        #         name='name'
-        #     ))
+        dict(type='WandbLoggerHook',
+            init_kwargs=dict(
+                project='segmentation',
+                entity='cv4',
+                name='zzin'
+            ))
     ])
 # yapf:enable
 custom_hooks = [dict(type='NumClassCheckHook')]
