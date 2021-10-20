@@ -15,18 +15,18 @@ model = dict(
         pretrain_img_size=384,
         embed_dims=128,
         patch_size=4,
-        window_size=12,
         mlp_ratio=4,
         depths=[2, 2, 18, 2],
         num_heads=[4, 8, 16, 32],
+        window_size=12,
         strides=(4, 2, 2, 2),
         out_indices=(0, 1, 2, 3),
         qkv_bias=True,
         qk_scale=None,
-        patch_norm=True,
         drop_rate=0.,
         attn_drop_rate=0.,
         drop_path_rate=0.3,
+        patch_norm=True,
         use_abs_pos_embed=False,
         act_cfg=dict(type='GELU'),
         norm_cfg=backbone_norm_cfg),
@@ -59,9 +59,6 @@ model = dict(
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))
 
-
-# AdamW optimizer, no weight decay for position embedding & layer norm
-# in backbone
 optimizer = dict(
     _delete_=True,
     type='AdamW',
@@ -74,22 +71,8 @@ optimizer = dict(
             'relative_position_bias_table': dict(decay_mult=0.),
             'norm': dict(decay_mult=0.)
         }))
-optimizer_config = dict()
 
-lr_config = dict(
-    _delete_=True,
-    policy='poly',
-    warmup='linear',
-    warmup_iters=1500,
-    warmup_ratio=1e-6,
-    power=1.0,
-    min_lr=0.0,
-    by_epoch=False)
-
-# runtime settings
-runner = dict(type='IterBasedRunner', max_iters=160000)
-checkpoint_config = dict(by_epoch=False, interval=16000)
-evaluation = dict(interval=16000, metric='mIoU', pre_eval=True)
+runner = dict(type='EpochBasedRunner', max_epochs=100)
 
 # By default, models are trained on 8 GPUs with 2 images per GPU
-data = dict(samples_per_gpu=2)
+data = dict(samples_per_gpu=8)
