@@ -17,3 +17,11 @@ class UNetPlusPlus(BaseModel):
 			in_channels=imgChannels,
 			classes=classes
 		)
+class DeepLabV3Plus(BaseModel):
+	def __init__(self, encoderName, encoderWeights="imagenet", imgChannels=3, classes=11):
+		self.model = smp.DeepLabV3Plus(
+			encoder_name=encoderName,
+			encoder_weights=encoderWeights,
+			in_channels=imgChannels,
+			classes=classes
+		)
