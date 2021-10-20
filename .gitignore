@@ -21,3 +21,6 @@ mmsegmentation/configs/*
 !mmsegmentation/train.sh
 !mmsegmentation/visualize.sh
 !mmsegmentation/inference.ipynb
+!mmsegmentation/pretrain
+mmsegmentation/pretrain/*
+!mmsegmentation/pretrain/README.md
