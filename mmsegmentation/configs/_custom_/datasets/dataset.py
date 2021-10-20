@@ -3,8 +3,9 @@ dataset_type = 'CustomDataset'
 data_root = '/opt/ml/segmentation/input/mmseg/'
 
 # class settings
-classes = ['General trash', 'Paper', 'Paper pack', 'Metal', 'Glass', 'Plastic','Styrofoam', 'Plastic bag', 'Battery', 'Clothing']
+classes = ['Background', 'General trash', 'Paper', 'Paper pack', 'Metal', 'Glass', 'Plastic','Styrofoam', 'Plastic bag', 'Battery', 'Clothing']
 palette = [
+    [0, 0, 0],
     [192, 0, 128], [0, 128, 192], [0, 128, 64],
     [128, 0, 0], [64, 0, 128], [64, 0, 192],
     [192, 128, 64], [192, 192, 128], [64, 64, 128], [128, 0, 192]
@@ -48,7 +49,7 @@ data = dict(
         classes=classes,
         palette=palette,
         type=dataset_type,
-        reduce_zero_label=True, # reduce_zero_label : Class index에 background가 포함되는가 여부에 따라서 조절
+        #reduce_zero_label=True, # reduce_zero_label : Class index에 background가 포함되는가 여부에 따라서 조절
         img_dir=data_root + "images",
         ann_dir=data_root + "annotations",
         pipeline=train_pipeline),
@@ -56,7 +57,7 @@ data = dict(
         classes=classes,
         palette=palette,
         type=dataset_type,
-        reduce_zero_label=True,
+        #reduce_zero_label=True,
         img_dir=data_root + "images",
         ann_dir=data_root + "annotations",
         pipeline=test_pipeline),
@@ -64,6 +65,6 @@ data = dict(
         classes=classes,
         palette=palette,
         type=dataset_type,
-        reduce_zero_label=True,
+        #reduce_zero_label=True,
         img_dir=data_root + "images",
         pipeline=test_pipeline))
