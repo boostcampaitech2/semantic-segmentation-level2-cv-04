@@ -19,3 +19,5 @@ mmsegmentation/*
 mmsegmentation/configs/*
 !mmsegmentation/configs/_custom_
 !mmsegmentation/train.sh
+!mmsegmentation/visualize.sh
+!mmsegmentation/inference.ipynb
