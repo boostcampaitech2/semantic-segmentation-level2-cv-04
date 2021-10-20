@@ -65,6 +65,5 @@ data = dict(
         palette=palette,
         type=dataset_type,
         reduce_zero_label=True,
-        img_dir=data_root,
-        ann_dir=data_root,
+        img_dir=data_root + "images",
         pipeline=test_pipeline))
