@@ -3,24 +3,21 @@ import torch
 import os
 import numpy as np
 from tqdm import tqdm
+from collections import deque
 
-category_names = ['Background','General trash','Paper','Paper pack','Metal','Glass','Plastic','Styrofoam','Plastic bag','Battery','Clothing']
+category_names = ['Back','General','Paper','Pack','Metal','Glass','Plastic','EPS','P-Bag','Battery','Cloth']
 
-# FIXME 수정해라 이거
-def save_model(model, saved_dir, file_name='fcn_resnet50_best_model(pretrained).pt'):
-    check_point = {'net': model.state_dict()}
-    output_path = os.path.join(saved_dir, file_name)
-    torch.save(model, output_path)
-
-def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, saved_dir, val_every, device):
-    print(f'Start training..')
+def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, saved_dir, save_capacity, device):
     n_class = 11
     best_loss = 9999999
     
-    for epoch in range(num_epochs):
+    savedEpochList = deque()
+    bestEpoch=0
+    # IoU_by_class = [{classes : round(IoU,2)} for IoU, classes in zip([0 for i in range(len(category_names))], category_names)]  
+    mainPbar = tqdm(range(num_epochs), desc="Start Training")
+    for epoch in mainPbar:
         model.train()
-
-        pbar = tqdm(train_loader,desc=f"train epoch {epoch} ")
+        pbar = tqdm(train_loader, desc=f"Train #{epoch} ")
 
         hist = np.zeros((n_class, n_class))
         for step, (images, masks, _) in enumerate(pbar):
@@ -48,23 +45,28 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sav
             hist = add_hist(hist, masks, outputs, n_class=n_class)
             acc, acc_cls, mIoU, fwavacc, IoU = label_accuracy_score(hist)
 
+            # pbar.update()
             pbar.set_postfix_str(f"Acc: {acc.item():.2f}, AccCls: {acc_cls.item():.2f}, fwavacc: {fwavacc.item():.2f}, Loss: {loss.item():.2f}, mIoU: {mIoU.item():.2f}")
 
-        #TODO 저장주기 바까
-        # validation 주기에 따른 loss 출력 및 best model 저장
-        if (epoch + 1) % val_every == 0:
-            avrg_loss = validation(epoch + 1, model, val_loader, criterion, device)
-            if avrg_loss < best_loss:
-                print(f"Best performance at epoch: {epoch + 1}")
-                print(f"Save model in {saved_dir}")
-                best_loss = avrg_loss
-                save_model(model, saved_dir)
 
+        avrg_loss , mIoU= validation(epoch, model, val_loader, criterion, device, mainPbar)
+        if avrg_loss < best_loss:
+            mainPbar.set_description_str(f"Last save epoch #{epoch}, mIoU: {mIoU}")
+            best_loss = avrg_loss
 
-def validation(epoch, model, train_loader, criterion, device):
-    print(f'Start validation #{epoch}')
+            savedEpochList.append(epoch)
+            bestEpoch = epoch
+            if len(savedEpochList) >= max(save_capacity,2):
+                delTartget = savedEpochList.popleft()
+
+                # 파일 탐색 후 삭제
+                os.remove(os.path.join(saved_dir,f"epoch{delTartget}.pth"))
+            
+            torch.save(model, os.path.join(saved_dir,f"epoch{epoch}.pth"))
+    os.rename(f"epoch{bestEpoch}.pth","best.pth")
+
+def validation(epoch, model, train_loader, criterion, device, mainPbar):
     model.eval()
-
     with torch.no_grad():
         n_class = 11
         total_loss = 0
@@ -72,8 +74,8 @@ def validation(epoch, model, train_loader, criterion, device):
         
         hist = np.zeros((n_class, n_class))
 
-        pbar = tqdm(train_loader,desc=f"validating ")
         IoU_by_class = None
+        pbar = tqdm(train_loader,desc=f"Validation #{epoch} ")
         for step, (images, masks, _) in enumerate(pbar):
             
             images = torch.stack(images)       
@@ -94,11 +96,12 @@ def validation(epoch, model, train_loader, criterion, device):
             
             hist = add_hist(hist, masks, outputs, n_class=n_class)
             acc, acc_cls, mIoU, fwavacc, IoU = label_accuracy_score(hist)
+
             pbar.set_postfix_str(f"Acc: {acc.item():.2f}, AccCls: {acc_cls.item():.2f}, fwavacc: {fwavacc.item():.2f}, Loss: {loss.item():.2f}, mIoU: {mIoU.item():.2f}")
         
-        IoU_by_class = [{classes : round(IoU,4)} for IoU, classes in zip(IoU , category_names)]
-        
+        IoU_by_class = [{classes : round(IoU,2)} for IoU, classes in zip(IoU , category_names)]       
         avrg_loss = total_loss / cnt
-        print(f'Average Loss : {avrg_loss.item():.4f}, IoU by class : {IoU_by_class}')
+        mainPbar.set_postfix_str(f"Avrg Loss: {avrg_loss.item():.2f}")
+        # ", IoU by class : {IoU_by_class}")
         
-    return avrg_loss
+    return avrg_loss, mIoU
