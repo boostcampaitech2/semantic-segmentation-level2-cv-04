@@ -1,6 +1,4 @@
 checkpoint_config = dict(interval=1)
-evaluation = dict(interval=1, metric='mIoU', pre_eval=True)
-
 # yapf:disable
 log_config = dict(
     interval=50,
