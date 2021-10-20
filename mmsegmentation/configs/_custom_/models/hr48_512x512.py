@@ -1,7 +1,7 @@
 _base_ = [
     '../datasets/dataset.py',
     '../default_runtime.py',
-    '../schedules/schedule_SGD.py'
+    '../schedules/schedule_AdamW.py'
 ]
 
 # model settings
@@ -48,7 +48,7 @@ model = dict(
         num_convs=1,
         concat_input=False,
         dropout_ratio=-1,
-        num_classes=10,
+        num_classes=11, # background + 10 classes
         norm_cfg=norm_cfg,
         align_corners=False,
         loss_decode=dict(
