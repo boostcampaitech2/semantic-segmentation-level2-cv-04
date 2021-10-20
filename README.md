@@ -19,3 +19,5 @@ MMsegmentation 사용하려면 데이터 셋 format을 먼저 바꿔야 합니�
 - "/input/data/image_reroute.py"
 - "/input/data/json-filename_edit.py"
 - "/baseline_code/make_mask_image.ipynb"
+
+train / inference / visualize code 구현되어 있습니다.
