@@ -73,6 +73,4 @@ optimizer = dict(
         }))
 
 runner = dict(type='EpochBasedRunner', max_epochs=100)
-
-# By default, models are trained on 8 GPUs with 2 images per GPU
-data = dict(samples_per_gpu=8)
+data = dict(samples_per_gpu=10)
