@@ -11,7 +11,7 @@ input/data/*
 # output
 baseline_code/saved
 baseline_code/submission/*
-
+baseline_code/wandb/*
 baseline_code___/*
 
 output/*
