@@ -3,9 +3,9 @@ import json
 import shutil
 
 DATAROOT = "./"
-TRAINJSON = os.path.join(DATAROOT,"train.json")
-VALIDJSON = os.path.join(DATAROOT,"val.json")
-TESTJSON = os.path.join(DATAROOT,"test.json")
+TRAINJSON = os.path.join(DATAROOT,"train_0.json")
+VALIDJSON = os.path.join(DATAROOT,"valid_0.json")
+#TESTJSON = os.path.join(DATAROOT,"test.json")
 
 '''
 Redistribution image by train/valid/test 
@@ -38,7 +38,7 @@ def __main__():
 
 	make(TRAINJSON, 'training')
 	make(VALIDJSON, 'validation')
-	make(TESTJSON, 'test')
+	#make(TESTJSON, 'test')
 
 
 if __name__=='__main__':
