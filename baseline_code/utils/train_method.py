@@ -1,20 +1,14 @@
-from utils.utils import *
 import torch
-import os
 import numpy as np
-from collections import deque
+from utils.utils import add_hist, label_accuracy_score
 from utils.wandb_method import WandBMethod
 from utils.tqdm import TQDM
-
-category_names = ['Background','General trash','Paper','Paper pack','Metal','Glass','Plastic','Styrofoam','Plastic bag','Battery','Clothing']
+from utils.save_helper import SaveHelper
 
 def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, scheduler, saved_dir, save_capacity, device, doWandb):
     n_class = 11
-    best_loss = 9999999
     
-    savedEpochList = deque()
-    bestEpoch=0
-    # IoU_by_class = [{classes : round(IoU,2)} for IoU, classes in zip([0 for i in range(len(category_names))], category_names)]  
+    saveHelper = SaveHelper(save_capacity)
     mainPbar = TQDM.makeMainProcessBar(num_epochs)
 
     for epoch in mainPbar:
@@ -56,20 +50,12 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
 
         avrg_loss , mIoU= validation(epoch, model, val_loader, criterion, device, mainPbar, doWandb)
         
-        if avrg_loss < best_loss:
+        if saveHelper.checkBestLoss(avrg_loss, epoch):
             TQDM.setMainPbarDescInSaved(mainPbar,epoch,mIoU)
-            best_loss = avrg_loss
-
-            savedEpochList.append(epoch)
-            bestEpoch = epoch
-            if len(savedEpochList) > max(save_capacity,2):
-                delTartget = savedEpochList.popleft()
-
-                # 파일 탐색 후 삭제
-                os.remove(os.path.join(saved_dir,f"epoch{delTartget}.pth"))
+            saveHelper.removeModel(saved_dir)
+            saveHelper.saveModel(epoch,saved_dir,model)
             
-            torch.save(model.state_dict(), os.path.join(saved_dir,f"epoch{epoch}.pth"))
-    os.rename(f"epoch{bestEpoch}.pth","best.pth")
+    saveHelper.renameBestModel()
 
 def validation(epoch, model, valid_loader, criterion, device, mainPbar, doWandb):
     model.eval()
@@ -106,7 +92,7 @@ def validation(epoch, model, valid_loader, criterion, device, mainPbar, doWandb)
             TQDM.setPbarPostInStep(pbar,acc,acc_clsmean,loss,mIoU)
 
         if doWandb:
-            WandBMethod.validLog(IoU, acc_cls, acc_clsmean, acc, mIoU, images, outputs, masks, {i:category for i, category in enumerate(category_names)})
+            WandBMethod.validLog(IoU, acc_cls, acc_clsmean, acc, mIoU, images, outputs, masks)
       
         avrg_loss = total_loss / cnt
         TQDM.setMainPbarPostInValid(mainPbar,avrg_loss)
