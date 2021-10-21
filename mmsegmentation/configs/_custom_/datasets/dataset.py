@@ -27,6 +27,20 @@ train_pipeline = [
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_semantic_seg']),
 ]
+valid_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(
+        type='MultiScaleFlipAug',
+        img_scale=(512, 512),
+        flip=False,
+        transforms=[
+            dict(type='Resize', keep_ratio=True),
+            dict(type='RandomFlip'),
+            dict(type='Normalize', **img_norm_cfg),
+            dict(type='ImageToTensor', keys=['img']),
+            dict(type='Collect', keys=['img']),
+        ])
+]
 test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
@@ -49,7 +63,6 @@ data = dict(
         classes=classes,
         palette=palette,
         type=dataset_type,
-        #reduce_zero_label=True, # reduce_zero_label : Class index에 background가 포함되는가 여부에 따라서 조절
         img_dir=data_root + "images",
         ann_dir=data_root + "annotations",
         pipeline=train_pipeline),
@@ -57,14 +70,12 @@ data = dict(
         classes=classes,
         palette=palette,
         type=dataset_type,
-        #reduce_zero_label=True,
         img_dir=data_root + "images",
         ann_dir=data_root + "annotations",
-        pipeline=test_pipeline),
+        pipeline=valid_pipeline),
     test=dict(
         classes=classes,
         palette=palette,
         type=dataset_type,
-        #reduce_zero_label=True,
         img_dir=data_root + "test",
         pipeline=test_pipeline))

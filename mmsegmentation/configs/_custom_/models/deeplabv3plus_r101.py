@@ -52,4 +52,4 @@ model = dict(
     test_cfg=dict(mode='whole'))
 
 runner = dict(type='EpochBasedRunner', max_epochs=50)
-data = dict(samples_per_gpu=16)
+data = dict(samples_per_gpu=10)
