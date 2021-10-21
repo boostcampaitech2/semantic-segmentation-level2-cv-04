@@ -14,9 +14,9 @@ class WandBMethod:
 		wandb.log({"train/loss":loss.item(),"train/decode.loss_ce":loss.item(),"train/decode.acc_seg":acc.item(), "learning_rate":lr})
 	
 	@staticmethod
-	def validLog(clsIoU, clsAcc,clsMeanAcc, mAcc, mIoU, images, outputs, masks, categoryDict):
+	def validLog(clsIoU, clsAcc,clsMeanAcc, mAcc, mIoU, images, outputs, masks):
 		randIdx = random.randint(0,len(images)-1)
-
+		categoryDict = {i:category for i, category in enumerate(['Background','General trash','Paper','Paper pack','Metal','Glass','Plastic','Styrofoam','Plastic bag','Battery','Clothing'])}
 		wandb.log({
 			"val/IoU.Background":clsIoU[0],
 			"val/IoU.Battery":clsIoU[10],
