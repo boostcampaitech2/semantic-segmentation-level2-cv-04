@@ -27,9 +27,7 @@ cd mmsegmentation
 python setup.py develop
 ```
 
----
-
-MMSegmentation 설치가 완료되었다면, 필요한 파일을 가져와서 사용!
+MMSegmentation 설치가 완료되었다면, 필요한 파일을 가져와서 사용하시면 됩니다.
 추가적으로 wandb, pandas 등 설치가 필요합니다.
 
 ---
