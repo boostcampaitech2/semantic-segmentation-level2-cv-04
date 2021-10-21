@@ -13,9 +13,9 @@ class TQDM:
 	@classmethod
 	def makePbar(cls, loader ,epoch, isTrain):
 		if isTrain:
-			desc = f"Validation #{epoch} "
-		else:
 			desc = f"Train #{epoch} "
+		else:
+			desc = f"Validation #{epoch} "
 		
 		return cls._makeProcessBar(loader,desc)
 	
