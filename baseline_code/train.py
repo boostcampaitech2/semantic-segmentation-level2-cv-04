@@ -8,8 +8,6 @@ from utils.train_method import train
 from torch import nn
 import os
 
-import wandb
-
 def getArg():
 	parser = argparse.ArgumentParser()
 
@@ -54,8 +52,8 @@ def main(arg):
 	valLoader = BaseDataLoader(dataset=val_dataset, batch_size=arg.batch,shuffle=False,num_workers=arg.valid_worker)
 
 	# TODO 모델하고 argument 따로 빼놓기
-	# model = DeepLabV3Plus(encoderName="timm-efficientnet-b7").model
-	model = UNetPlusPlus(encoderName="timm-regnetx_320").model
+	model = DeepLabV3Plus(encoderName="timm-efficientnet-b1").model
+	# model = UNetPlusPlus(encoderName="timm-regnetx_320").model
 	# Loss function 정의
 	criterion = nn.CrossEntropyLoss()
 

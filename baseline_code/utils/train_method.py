@@ -1,11 +1,9 @@
-import random
 from utils.utils import *
 import torch
 import os
 import numpy as np
 from tqdm import tqdm
 from collections import deque
-import wandb
 from utils.wandb_method import WandBMethod
 
 category_names = ['Background','General trash','Paper','Paper pack','Metal','Glass','Plastic','Styrofoam','Plastic bag','Battery','Clothing']
@@ -54,9 +52,10 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             pbar.set_postfix_str(f"Acc: {acc.item():.2f}, AccCls: {acc_clsmean.item():.2f}, fwavacc: {fwavacc.item():.2f}, Loss: {loss.item():.2f}, mIoU: {mIoU.item():.2f}")
 
             if doWandb:
-                WandBMethod.trainLog(loss.item(), acc.item(), scheduler.get_last_lr())
+                WandBMethod.trainLog(loss, acc, scheduler.get_last_lr())
 
         avrg_loss , mIoU= validation(epoch, model, val_loader, criterion, device, mainPbar, doWandb)
+        
         if avrg_loss < best_loss:
             mainPbar.set_description_str(f"Last save epoch #{epoch}, mIoU: {mIoU:.3f}")
             best_loss = avrg_loss
