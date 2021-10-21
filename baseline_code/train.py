@@ -54,20 +54,20 @@ def main(arg):
 	valLoader = BaseDataLoader(dataset=val_dataset, batch_size=arg.batch,shuffle=False,num_workers=arg.valid_worker)
 
 	# TODO 모델하고 argument 따로 빼놓기
-	model = DeepLabV3Plus(encoderName="timm-efficientnet-b7").model
-	# model = UNetPlusPlus(encoderName="timm-efficientnet-b1").model
+	# model = DeepLabV3Plus(encoderName="timm-efficientnet-b7").model
+	model = UNetPlusPlus(encoderName="timm-regnetx_320").model
 	# Loss function 정의
 	criterion = nn.CrossEntropyLoss()
 
 	# Optimizer 정의
 	optimizer = torch.optim.Adam(params = model.parameters(), lr = arg.lr, weight_decay=1e-4)
 	scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,T_max=100,eta_min=1e-4)
+	
 	# wandb
 
+	from utils.wandb_method import WandBMethod
 	if arg.wandb:
-			wandb.login()
-			wandb.init(project=arg.wandb_project, entity=arg.wandb_entity, name=arg.custom_name, config=arg)
-			wandb.watch(model,criterion, log="all",log_freq=10)
+			WandBMethod.login(arg, model, criterion)
 
 
 	train(arg.epoch, model, trainLoader, valLoader, criterion, optimizer,scheduler, outputPath, arg.save_capacity, device, arg.wandb)

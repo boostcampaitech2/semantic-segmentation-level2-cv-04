@@ -6,6 +6,7 @@ import numpy as np
 from tqdm import tqdm
 from collections import deque
 import wandb
+from utils.wandb_method import WandBMethod
 
 category_names = ['Background','General trash','Paper','Paper pack','Metal','Glass','Plastic','Styrofoam','Plastic bag','Battery','Clothing']
 
@@ -53,8 +54,7 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             pbar.set_postfix_str(f"Acc: {acc.item():.2f}, AccCls: {acc_clsmean.item():.2f}, fwavacc: {fwavacc.item():.2f}, Loss: {loss.item():.2f}, mIoU: {mIoU.item():.2f}")
 
             if doWandb:
-                wandb.log({"train/loss":loss.item(),"train/decode.loss_ce":loss.item(),"train/decode.acc_seg":acc.item(), "learning_rate":scheduler.get_last_lr()})
-
+                WandBMethod.trainLog(loss.item(), acc.item(), scheduler.get_last_lr())
 
         avrg_loss , mIoU= validation(epoch, model, val_loader, criterion, device, mainPbar, doWandb)
         if avrg_loss < best_loss:
@@ -106,46 +106,10 @@ def validation(epoch, model, train_loader, criterion, device, mainPbar, doWandb)
             pbar.set_postfix_str(f"Acc: {acc.item():.2f}, AccCls: {acc_clsmean.item():.2f}, fwavacc: {fwavacc.item():.2f}, Loss: {loss.item():.2f}, mIoU: {mIoU.item():.2f}")
 
         if doWandb:
-            randIdx = random.randint(0,len(images)-1)
-            wandb.log({
-                "val/IoU.Background":IoU[0],
-                "val/IoU.Battery":IoU[10],
-                "val/IoU.Clothing":IoU[9],
-                "val/IoU.General trash":IoU[1],
-                "val/IoU.Glass":IoU[5],
-                "val/IoU.Metal":IoU[4],
-                "val/IoU.Paper":IoU[2],
-                "val/IoU.Paper pack":IoU[3],
-                "val/IoU.Plastic":IoU[6],
-                "val/IoU.Plastic bag":IoU[8],
-                "val/IoU.Styrofoam":IoU[7],
-                "val/Acc.Background":acc_cls[0],
-                "val/Acc.Battery":acc_cls[10],
-                "val/Acc.Clothing":acc_cls[9],
-                "val/Acc.General trash":acc_cls[1],
-                "val/Acc.Glass":acc_cls[5],
-                "val/Acc.Metal":acc_cls[4],
-                "val/Acc.Paper":acc_cls[2],
-                "val/Acc.Paper pack":acc_cls[3],
-                "val/Acc.Plastic":acc_cls[6],
-                "val/Acc.Plastic bag":acc_cls[8],
-                "val/Acc.Styrofoam":acc_cls[7],
-                "val/aAcc":acc_clsmean.item(),
-                "val/mAcc":acc.item(),
-                "val/mIoU":mIoU.item(),
-                "image" : wandb.Image(images[randIdx], masks={
-                    "predictions" : {
-                        "mask_data" : outputs[randIdx],
-                        "class_labels":{i:category for i, category in enumerate(category_names)}
-                    },
-                    "ground_truth" : {
-                        "mask_data" : masks[randIdx],
-                        "class_labels":{i:category for i, category in enumerate(category_names)}
-                    }}),
-                })
+            WandBMethod.validLog(IoU, acc_cls, acc_clsmean, acc, mIoU, images, outputs, masks, {i:category for i, category in enumerate(category_names)})
+
       
         avrg_loss = total_loss / cnt
         mainPbar.set_postfix_str(f"Avrg Loss: {avrg_loss.item():.2f}")
-        # ", IoU by class : {IoU_by_class}")
         
     return avrg_loss, mIoU
