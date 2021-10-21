@@ -15,19 +15,12 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-# 모델 저장 함수 정의
-val_every = 1
-
-saved_dir = './saved'
-if not os.path.isdir(saved_dir):                                                           
-    os.mkdir(saved_dir)
-
 def save_model(model, saved_dir, file_name='fcn_resnet50_best_model(pretrained).pt'):
     check_point = {'net': model.state_dict()}
     output_path = os.path.join(saved_dir, file_name)
     torch.save(model, output_path)
 
-def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_scheduler, saved_dir, val_every, device):
+def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_scheduler, saved_dir, val_every, device, sorted_df):
     print(f'Start training..')
     n_class = 11
     best_loss = 9999999
@@ -70,7 +63,7 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_s
              
         # validation 주기에 따른 loss 출력 및 best model 저장
         if (epoch + 1) % val_every == 0:
-            avrg_loss, mIoU_val = validation(epoch + 1, model, val_loader, criterion, device)
+            avrg_loss, mIoU_val = validation(epoch + 1, model, val_loader, criterion, device, sorted_df)
             if mIoU_val > best_mIoU:
                 print(f"Best performance at epoch: {epoch + 1}")
                 print(f"Save model in {saved_dir}")
@@ -78,7 +71,7 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_s
                 save_model(model, saved_dir)
 
 
-def validation(epoch, model, data_loader, criterion, device):
+def validation(epoch, model, data_loader, criterion, device, sorted_df):
     print(f'Start validation #{epoch}')
     model.eval()
 

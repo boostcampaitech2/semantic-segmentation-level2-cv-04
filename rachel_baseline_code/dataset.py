@@ -16,6 +16,7 @@ import pandas as pd
 from tqdm import tqdm
 
 
+
 category_names = list(sorted_df.Categories)
 
 def get_classname(classID, cats):
@@ -81,64 +82,3 @@ class CustomDataLoader(Dataset):
         return len(self.coco.getImgIds())
 
 
-# train.json / validation.json / test.json 디렉토리 설정
-train_path = dataset_path + '/train.json'
-val_path = dataset_path + '/val.json'
-test_path = dataset_path + '/test.json'
-
-# collate_fn needs for batch
-def collate_fn(batch):
-    return tuple(zip(*batch))
-
-
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
-
-train_transform = A.Compose([
-                            ToTensorV2()
-                            ])
-
-val_transform = A.Compose([
-                          ToTensorV2()
-                          ])
-
-test_transform = A.Compose([
-                           ToTensorV2()
-                           ])
-
-# create own Dataset 1 (skip)
-# validation set을 직접 나누고 싶은 경우
-# random_split 사용하여 data set을 8:2 로 분할
-# train_size = int(0.8*len(dataset))
-# val_size = int(len(dataset)-train_size)
-# dataset = CustomDataLoader(data_dir=train_path, mode='train', transform=transform)
-# train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
-
-# create own Dataset 2
-# train dataset
-train_dataset = CustomDataLoader(data_dir=train_path, mode='train', transform=train_transform)
-
-# validation dataset
-val_dataset = CustomDataLoader(data_dir=val_path, mode='val', transform=val_transform)
-
-# test dataset
-test_dataset = CustomDataLoader(data_dir=test_path, mode='test', transform=test_transform)
-
-
-# DataLoader
-train_loader = torch.utils.data.DataLoader(dataset=train_dataset, 
-                                           batch_size=batch_size,
-                                           shuffle=True,
-                                           num_workers=4,
-                                           collate_fn=collate_fn)
-
-val_loader = torch.utils.data.DataLoader(dataset=val_dataset, 
-                                         batch_size=batch_size,
-                                         shuffle=False,
-                                         num_workers=4,
-                                         collate_fn=collate_fn)
-
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
-                                          batch_size=batch_size,
-                                          num_workers=4,
-                                          collate_fn=collate_fn)
