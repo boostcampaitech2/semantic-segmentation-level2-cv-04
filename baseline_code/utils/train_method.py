@@ -8,7 +8,7 @@ from utils.save_helper import SaveHelper
 def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, scheduler, saved_dir, save_capacity, device, doWandb):
     n_class = 11
     
-    saveHelper = SaveHelper(save_capacity)
+    saveHelper = SaveHelper(save_capacity, saved_dir)
     mainPbar = TQDM.makeMainProcessBar(num_epochs)
 
     for epoch in mainPbar:
@@ -52,8 +52,8 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
         
         if saveHelper.checkBestLoss(avrg_loss, epoch):
             TQDM.setMainPbarDescInSaved(mainPbar,epoch,mIoU)
-            saveHelper.removeModel(saved_dir)
-            saveHelper.saveModel(epoch,saved_dir,model)
+            saveHelper.removeModel()
+            saveHelper.saveModel(epoch,model)
             
     saveHelper.renameBestModel()
 
