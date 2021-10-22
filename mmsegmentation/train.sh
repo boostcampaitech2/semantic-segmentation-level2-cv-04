@@ -8,4 +8,8 @@
 
 # python tools/train.py configs/_custom_/models/deeplabv3plus_r101.py --seed 42 --work-dir ../output/mmseg/deeplabv3plus_r101
 
-python tools/train.py configs/_custom_/models/deeplabv3plus_r101.py --seed 42 --work-dir ../output/mmseg/deeplabv3plus_r101 --load-from ../output/mmseg/deeplabv3plus_r101/latest.pth --resume-from ../output/mmseg/deeplabv3plus_r101/latest.pth
+# python tools/train.py configs/_custom_/models/deeplabv3plus_r101.py --seed 42 --work-dir ../output/mmseg/deeplabv3plus_r101 --load-from ../output/mmseg/deeplabv3plus_r101/latest.pth --resume-from ../output/mmseg/deeplabv3plus_r101/latest.pth
+
+# python tools/train.py configs/_custom_/models/upernet_swin_b.py --seed 42 --work-dir ../output/mmseg/upernet_swin_b_stratified
+
+python tools/train.py configs/_custom_/models/upernet_deit_b_ln_min.py --seed 42 --work-dir ../output/mmseg/upernet_deit_b_ln_min
