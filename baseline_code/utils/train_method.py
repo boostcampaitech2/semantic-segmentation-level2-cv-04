@@ -48,8 +48,9 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             if doWandb:
                 WandBMethod.trainLog(loss, acc, scheduler.get_last_lr())
 
-        avrg_loss , mIoU= validation(epoch, model, val_loader, criterion, device, mainPbar, doWandb)
-        
+        avrg_loss , mIoU= validation(epoch, model, val_loader, criterion, device, doWandb)
+        TQDM.setMainPbarPostInValid(mainPbar,avrg_loss)
+
         if saveHelper.checkBestLoss(avrg_loss, epoch):
             TQDM.setMainPbarDescInSaved(mainPbar,epoch,mIoU)
             saveHelper.removeModel()
@@ -57,7 +58,7 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             
     saveHelper.renameBestModel()
 
-def validation(epoch, model, valid_loader, criterion, device, mainPbar, doWandb):
+def validation(epoch, model, valid_loader, criterion, device, doWandb):
     model.eval()
     with torch.no_grad():
         n_class = 11
@@ -95,5 +96,5 @@ def validation(epoch, model, valid_loader, criterion, device, mainPbar, doWandb)
             WandBMethod.validLog(IoU, acc_cls, acc_clsmean, acc, mIoU, images, outputs, masks)
       
         avrg_loss = total_loss / cnt
-        TQDM.setMainPbarPostInValid(mainPbar,avrg_loss)
+        # TQDM.setMainPbarPostInValid(mainPbar,avrg_loss)
     return avrg_loss, mIoU
