@@ -3,7 +3,9 @@ import random
 import argparse
 import time
 import json
-import warnings 
+import warnings
+
+from torch.utils import data 
 warnings.filterwarnings('ignore')
 
 import torch
@@ -19,15 +21,13 @@ from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import models
+import segmentation_models_pytorch as smp
 
 from train import train
 from dataset import CustomDataLoader
+from annotation import annotation
 
 # 전처리를 위한 라이브러리
-from pycocotools.coco import COCO
-import torchvision
-import torchvision.transforms as transforms
-
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
@@ -48,91 +48,56 @@ def arg_parser():
     parser.add_argument('--learning_rate', default=0.0001, type=float)
     parser.add_argument('--scheduler', default='cosine', type=str)
 
+    return parser
+
+
 def seed_everything(random_seed: int = 42):
     torch.manual_seed(random_seed)
     torch.cuda.manual_seed(random_seed)
-    torch.cuda.manual_seed_all(random_seed) # if use multi-GPU
+    torch.cuda.manual_seed_all(random_seed)  # if use multi-GPU
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     np.random.seed(random_seed)
-    random.seed(random_seed)    
+    random.seed(random_seed)
+
 
 def main(args):
 
     print('pytorch version: {}'.format(torch.__version__))
     print('GPU 사용 가능 여부: {}'.format(torch.cuda.is_available()))
 
-    print(torch.cuda.get_device_name(0))
-    print(torch.cuda.device_count())
+    print('Device name:', torch.cuda.get_device_name(0))
+    print('Number of GPU:', torch.cuda.device_count())
 
     # GPU 사용 가능 여부에 따라 device 정보 저장
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # train.json / validation.json / test.json 디렉토리 설정
-    dataset_path  = '../input/data'
+    dataset_path = '../input/data'
     train_path = dataset_path + '/train.json'
     val_path = dataset_path + '/val.json'
     test_path = dataset_path + '/test.json'
 
-    # Read annotations
-    anns_file_path = dataset_path + '/' + 'train_all.json'
-    with open(anns_file_path, 'r') as f:
-        dataset = json.loads(f.read())
-
-    categories = dataset['categories']
-    anns = dataset['annotations']
-    imgs = dataset['images']
-    nr_cats = len(categories)
-    nr_annotations = len(anns)
-    nr_images = len(imgs)
-
-    # Load categories and super categories
-    cat_names = []
-    super_cat_names = []
-    super_cat_ids = {}
-    super_cat_last_name = ''
-    nr_super_cats = 0
-    for cat_it in categories:
-        cat_names.append(cat_it['name'])
-        super_cat_name = cat_it['supercategory']
-        # Adding new supercat
-        if super_cat_name != super_cat_last_name:
-            super_cat_names.append(super_cat_name)
-            super_cat_ids[super_cat_name] = nr_super_cats
-            super_cat_last_name = super_cat_name
-            nr_super_cats += 1
-
-    # Count annotations
-    cat_histogram = np.zeros(nr_cats,dtype=int)
-    for ann in anns:
-        cat_histogram[ann['category_id']-1] += 1
-
-    # Convert to DataFrame
-    df = pd.DataFrame({'Categories': cat_names, 'Number of annotations': cat_histogram})
-    df = df.sort_values('Number of annotations', 0, False)
-
-    # category labeling 
-    sorted_temp_df = df.sort_index()
-
-    # background = 0 에 해당되는 label 추가 후 기존들을 모두 label + 1 로 설정
-    sorted_df = pd.DataFrame(["Backgroud"], columns = ["Categories"])
-    sorted_df = sorted_df.append(sorted_temp_df, ignore_index=True)
+    # class (Categories) 에 따른 index 확인 (0~10 : 총 11개)
+    sorted_df = annotation(dataset_path)
+    category_names = list(sorted_df.Categories)
 
     # collate_fn needs for batch
     def collate_fn(batch):
         return tuple(zip(*batch))
 
+    # Data Augmentation
     train_transform = A.Compose([
-                                ToTensorV2()
-                                ])
+        ToTensorV2()
+    ])
 
     val_transform = A.Compose([
-                            ToTensorV2()
-                            ])
+        ToTensorV2()
+    ])
 
     test_transform = A.Compose([
-                            ToTensorV2()
-                            ])
+        ToTensorV2()
+    ])
 
     # create own Dataset 1 (skip)
     # validation set을 직접 나누고 싶은 경우
@@ -144,33 +109,43 @@ def main(args):
 
     # create own Dataset 2
     # train dataset
-    train_dataset = CustomDataLoader(data_dir=train_path, mode='train', transform=train_transform)
+    train_dataset = CustomDataLoader(data_dir=train_path,
+                                     dataset_path=dataset_path,
+                                     category_names=category_names,
+                                     mode='train',
+                                     transform=train_transform)
 
     # validation dataset
-    val_dataset = CustomDataLoader(data_dir=val_path, mode='val', transform=val_transform)
+    val_dataset = CustomDataLoader(data_dir=val_path,
+                                   dataset_path=dataset_path,
+                                   category_names=category_names,
+                                   mode='val',
+                                   transform=val_transform)
 
     # test dataset
-    test_dataset = CustomDataLoader(data_dir=test_path, mode='test', transform=test_transform)
-
+    test_dataset = CustomDataLoader(data_dir=test_path,
+                                    dataset_path=dataset_path,
+                                    category_names=category_names,
+                                    mode='test',
+                                    transform=test_transform)
 
     # DataLoader
-    train_loader = torch.utils.data.DataLoader(dataset=train_dataset, 
-                                            batch_size=args.batch_size,
-                                            shuffle=True,
-                                            num_workers=4,
-                                            collate_fn=collate_fn)
+    train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
+                                               batch_size=args.batch_size,
+                                               shuffle=True,
+                                               num_workers=4,
+                                               collate_fn=collate_fn)
 
-    val_loader = torch.utils.data.DataLoader(dataset=val_dataset, 
-                                            batch_size=args.batch_size,
-                                            shuffle=False,
-                                            num_workers=4,
-                                            collate_fn=collate_fn)
+    val_loader = torch.utils.data.DataLoader(dataset=val_dataset,
+                                             batch_size=args.batch_size,
+                                             shuffle=False,
+                                             num_workers=4,
+                                             collate_fn=collate_fn)
 
     test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
-                                            batch_size=args.batch_size,
-                                            num_workers=4,
-                                            collate_fn=collate_fn)
-
+                                              batch_size=args.batch_size,
+                                              num_workers=4,
+                                              collate_fn=collate_fn)
 
     # model 정의
     model = models.segmentation.fcn_resnet50(pretrained=True)
@@ -182,24 +157,26 @@ def main(args):
     criterion = nn.CrossEntropyLoss()
 
     # Optimizer 정의
-    optimizer = optim.Adam(params = model.parameters(), lr = args.learning_rate, weight_decay=1e-6)
+    optimizer = optim.Adam(params=model.parameters(),
+                           lr=args.learning_rate, weight_decay=1e-6)
 
     # lr_scheduler 정의
     if args.scheduler == 'cosine':
         lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100, eta_min=0.001)
     elif args.scheduler == 'multiply':
-        lmbda = lambda epoch: 0.98739
+        def lmbda(epoch): return 0.98739
         lr_scheduler = optim.lr_scheduler.MultiplicativeLR(optimizer, lr_lambda=lmbda)
 
     # 모델 저장 함수 정의
     val_every = 1
 
     saved_dir = './saved'
-    if not os.path.isdir(saved_dir):                                                           
+    if not os.path.isdir(saved_dir):
         os.mkdir(saved_dir)
 
     # 모델 학습
-    train(args.num_epochs, model, train_loader, val_loader, criterion, optimizer, lr_scheduler, saved_dir, val_every, device, sorted_df)
+    train(args.num_epochs, model, train_loader, val_loader, criterion,
+          optimizer, lr_scheduler, saved_dir, val_every, device, sorted_df)
 
     # best model 저장된 경로
     model_path = './saved/fcn_resnet50_best_model(pretrained).pt'
@@ -215,7 +192,8 @@ def main(args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Semantic Segmentation', parents=[arg_parser()])
+    parser = argparse.ArgumentParser(
+        description='Semantic Segmentation', parents=[arg_parser()])
     args = parser.parse_args()
     seed_everything(args.seed)
     main(args)

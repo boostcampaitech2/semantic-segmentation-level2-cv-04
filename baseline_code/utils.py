@@ -42,8 +42,6 @@ def add_hist(hist, label_trues, label_preds, n_class):
     return hist
 
 
-
-
 def _fast_hist(label_true, label_pred, n_class):
     mask = (label_true >= 0) & (label_true < n_class)
     hist = np.bincount(
