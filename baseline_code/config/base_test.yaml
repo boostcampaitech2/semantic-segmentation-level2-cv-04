@@ -1,0 +1,53 @@
+seed: 42 # seed
+saved_dir: ./saved # save directory
+exp_name: 0_Base_Test # experiment name
+val_every: 1 # validation step
+
+model:
+  name: DeepLabV3Plus
+  params:
+    encoder_name: tu-xception65
+    encoder_weights: imagenet
+    in_channels: 3
+    classes: 11
+  
+# data
+dataset_path: '../input/data'
+train_path: ../input/data/split/train_0.json
+val_path: ../input/data/split/valid_0.json
+
+train_dataloader:
+  params:
+    batch_size: 16
+    shuffle: true
+    num_workers: 4
+    drop_last: true
+
+valid_dataloader:
+  params:
+    batch_size: 16
+    shuffle: true
+    num_workers: 4
+
+transforms:
+  name: train_transform
+
+# train setting
+epochs: 40
+
+criterion: 
+  name: cross_entropy
+
+optimizer:
+  name: AdamW
+  params:
+    lr: 0.0001 # 1e4
+    weight_decay: 0.00001 # 1e5
+
+scheduler:
+  name: OneCycleLR
+  params:
+    max_lr: 0.0001 # 1e4
+    pct_start: 0.05
+    steps_per_epoch: 1
+    epochs: 40

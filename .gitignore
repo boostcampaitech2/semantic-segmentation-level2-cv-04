@@ -13,3 +13,6 @@ baseline_code/saved
 baseline_code/submission/*
 
 baseline_code___/*
+
+#wandb
+baseline_code/wandb/*
