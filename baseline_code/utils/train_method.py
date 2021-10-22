@@ -56,7 +56,7 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             saveHelper.removeModel()
             saveHelper.saveModel(epoch,model)
             
-    saveHelper.renameBestModel()
+    # saveHelper.renameBestModel() #생각해보니 best일때만 저장되니까 젤높은숫자가 best임
 
 def validation(epoch, model, valid_loader, criterion, device, doWandb):
     model.eval()
