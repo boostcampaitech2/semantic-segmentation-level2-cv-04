@@ -4,17 +4,13 @@ import os
 import shutil
 from importlib import import_module
 
-
 from dataset.base_dataset import CustomDataset
-from dataloader.base_dataloader import BaseDataLoader
 from utils.train_method import train
 from utils.set_seed import setSeed
 
 def getArgument():
 	parser = argparse.ArgumentParser()
-
 	parser.add_argument('--custom_dir',type=str ,required=True)
-
 	return parser.parse_known_args()[0].custom_dir
 
 
@@ -30,16 +26,17 @@ def main(custom_dir):
 	shutil.copytree(f"custom/{custom_dir}",outputPath+"/settings")
 
 	train_transform, val_transform = getattr(import_module(f"custom.{custom_dir}.transform"), "getTransform")()
+
 	train_dataset = CustomDataset(data_dir=addPath([arg.image_root,arg.train_json]),image_root=arg.image_root, mode='train', transform=train_transform)
 	val_dataset = CustomDataset(data_dir=addPath([arg.image_root,arg.val_json]),image_root=arg.image_root, mode='val', transform=val_transform)
 
-	trainLoader = BaseDataLoader(dataset=train_dataset, batch_size=arg.batch,shuffle=True,num_workers=arg.train_worker)
-	valLoader = BaseDataLoader(dataset=val_dataset, batch_size=arg.batch,shuffle=False,num_workers=arg.valid_worker)
+	trainLoader, valLoader = getattr(import_module(f"custom.{custom_dir}.dataloader"), "getDataloader")(
+		train_dataset, val_dataset, arg.batch, arg.train_worker, arg.valid_worker)
 
 	model = getattr(import_module(f"custom.{custom_dir}.model"), "getModel")()
 	criterion = getattr(import_module(f"custom.{custom_dir}.loss"), "getLoss")()
-	optimizer, scheduler = getattr(import_module(
-		f"custom.{custom_dir}.opt_scheduler"), "getOptAndScheduler")(model, arg.lr)
+
+	optimizer, scheduler = getattr(import_module(f"custom.{custom_dir}.opt_scheduler"), "getOptAndScheduler")(model, arg.lr)
 	
 	# wandb
 	from utils.wandb_method import WandBMethod
