@@ -69,6 +69,11 @@ def validation(epoch, model, valid_loader, criterion, device, doWandb):
 
         pbar = TQDM.makePbar(valid_loader,epoch,False)
 
+
+        # len(pbar) 중 랜덤하게 정수 뽑고 해당 step일 때 이미지 그룹 찝어다가 이미지를 doWandb에 넣어줘
+        targetStep = WandBMethod.pickImageStep(len(pbar))
+        targetImages, targetOutputs, targetMasks = None, None, None
+
         for step, (images, masks, _) in enumerate(pbar):
             
             images = torch.stack(images)       
@@ -91,10 +96,12 @@ def validation(epoch, model, valid_loader, criterion, device, doWandb):
             acc, acc_cls, acc_clsmean, mIoU, fwavacc, IoU = label_accuracy_score(hist)
 
             TQDM.setPbarPostInStep(pbar,acc,acc_clsmean,loss,mIoU)
+            if step==targetStep:
+                targetImages, targetOutputs, targetMasks = images.detach().cpu().numpy(), outputs, masks
 
         if doWandb:
-            WandBMethod.validLog(IoU, acc_cls, acc_clsmean, acc, mIoU, images, outputs, masks)
+            WandBMethod.validLog(IoU, acc_cls, acc_clsmean, acc, mIoU, targetImages, targetOutputs, targetMasks)
       
         avrg_loss = total_loss / cnt
-        # TQDM.setMainPbarPostInValid(mainPbar,avrg_loss)
+        
     return avrg_loss, mIoU
