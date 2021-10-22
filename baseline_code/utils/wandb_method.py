@@ -1,5 +1,8 @@
+from math import sqrt
 import wandb
 import random
+import cv2
+import numpy as np
 
 class WandBMethod:
 
@@ -13,10 +16,15 @@ class WandBMethod:
 	def trainLog(loss, acc, lr):
 		wandb.log({"train/loss":loss.item(),"train/decode.loss_ce":loss.item(),"train/decode.acc_seg":acc.item(), "learning_rate_torch":lr})
 	
-	@staticmethod
-	def validLog(clsIoU, clsAcc,clsMeanAcc, mAcc, mIoU, images, outputs, masks):
+	@classmethod
+	def validLog(cls, clsIoU, clsAcc,clsMeanAcc, mAcc, mIoU, images, outputs, masks):
 		randIdx = random.randint(0,len(images)-1)
 		categoryDict = {i:category for i, category in enumerate(['Background','General trash','Paper','Paper pack','Metal','Glass','Plastic','Styrofoam','Plastic bag','Battery','Clothing'])}
+		
+		image = cls.concatImages(images)
+		output = cls.concatImages(outputs)
+		mask = cls.concatImages(masks)
+		
 		wandb.log({
 			"val/IoU.Background":clsIoU[0],
 			"val/IoU.Battery":clsIoU[10],
@@ -40,18 +48,38 @@ class WandBMethod:
 			"val/Acc.Plastic":clsAcc[6],
 			"val/Acc.Plastic bag":clsAcc[8],
 			"val/Acc.Styrofoam":clsAcc[7],
-			# "val/aAcc":clsMeanAcc.item(),
-			# "val/mAcc":mAcc.item(),
 			"val/aAcc":mAcc.item(),
 			"val/mAcc":clsMeanAcc.item(), #wandb 맞추는중
 			"val/mIoU":mIoU.item(),
-			"image" : wandb.Image(images[randIdx], masks={
+			"image" : wandb.Image(image, masks={
 					"predictions" : {
-							"mask_data" : outputs[randIdx],
+							"mask_data" : output,
 							"class_labels":categoryDict
 					},
 					"ground_truth" : {
-							"mask_data" : masks[randIdx],
+							"mask_data" : mask,
 							"class_labels":categoryDict
 					}}),
-		})		
+		})
+
+	@staticmethod
+	def pickImageStep(length):
+		return random.randint(0,length-1)	
+
+	@staticmethod
+	def concatImages(images):
+		length = len(images)
+		squareSide = int(sqrt(length))
+
+		hConcatImgs = []
+		for i in range(0,length,squareSide):
+			imgList = []
+			for j in range(i,i+squareSide):
+				if images[j].shape == (512,512):
+					nowImage = np.expand_dims(images[j],axis=2) 
+				else:
+					nowImage = np.transpose(images[j],(1,2,0))
+				imgList.append(nowImage)
+
+			hConcatImgs.append(cv2.hconcat(imgList))
+		return cv2.vconcat(hConcatImgs)
