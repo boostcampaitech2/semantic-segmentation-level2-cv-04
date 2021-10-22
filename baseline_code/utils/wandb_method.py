@@ -11,7 +11,7 @@ class WandBMethod:
 	
 	@staticmethod
 	def trainLog(loss, acc, lr):
-		wandb.log({"train/loss":loss.item(),"train/decode.loss_ce":loss.item(),"train/decode.acc_seg":acc.item(), "learning_rate":lr})
+		wandb.log({"train/loss":loss.item(),"train/decode.loss_ce":loss.item(),"train/decode.acc_seg":acc.item(), "learning_rate_torch":lr})
 	
 	@staticmethod
 	def validLog(clsIoU, clsAcc,clsMeanAcc, mAcc, mIoU, images, outputs, masks):
@@ -40,8 +40,10 @@ class WandBMethod:
 			"val/Acc.Plastic":clsAcc[6],
 			"val/Acc.Plastic bag":clsAcc[8],
 			"val/Acc.Styrofoam":clsAcc[7],
-			"val/aAcc":clsMeanAcc.item(),
-			"val/mAcc":mAcc.item(),
+			# "val/aAcc":clsMeanAcc.item(),
+			# "val/mAcc":mAcc.item(),
+			"val/aAcc":mAcc.item(),
+			"val/mAcc":clsMeanAcc.item(), #wandb 맞추는중
 			"val/mIoU":mIoU.item(),
 			"image" : wandb.Image(images[randIdx], masks={
 					"predictions" : {
