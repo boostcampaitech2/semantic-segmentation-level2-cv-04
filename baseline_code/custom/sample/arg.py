@@ -10,8 +10,8 @@ def getArg():
 	arg.save_capacity = 5
 	
 	arg.image_root = "../input/data"
-	arg.train_json = "train.json"
-	arg.val_json = "val.json"
+	arg.train_json = "train_0.json"
+	arg.val_json = "valid_0.json"
 	arg.output_path = "../output"
 
 	arg.train_worker = 4
