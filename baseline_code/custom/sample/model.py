@@ -1,5 +1,7 @@
 import segmentation_models_pytorch as smp
 
+# https://smp.readthedocs.io/en/latest/index.html
+
 def getModel():
 	
 	model = smp.Unet(

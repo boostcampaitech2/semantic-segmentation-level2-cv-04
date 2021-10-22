@@ -5,7 +5,7 @@ def getArg():
 
 	arg.batch = 16
 	arg.epoch = 20
-	arg.lr = 1e-3
+	arg.lr = 1e-4
 	arg.seed = 21
 	arg.save_capacity = 5
 	
