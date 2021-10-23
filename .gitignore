@@ -18,6 +18,7 @@ output
 
 # mmsegmentation
 mmsegmentation/*
+!mmsegmentation/README.md
 !mmsegmentation/configs
 mmsegmentation/configs/*
 !mmsegmentation/configs/_custom_
