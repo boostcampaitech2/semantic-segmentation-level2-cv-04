@@ -7,9 +7,26 @@
 
 # dataset
 input/data/*
+input/mmseg
+!input/data/image_reroute.py
+!input/data/json-filename_edit.py
 
 # output
 baseline_code/saved
 baseline_code/submission/*
+output
 
+# mmsegmentation
+mmsegmentation/*
+!mmsegmentation/configs
+mmsegmentation/configs/*
+!mmsegmentation/configs/_custom_
+!mmsegmentation/train.sh
+!mmsegmentation/visualize.sh
+!mmsegmentation/inference.ipynb
+!mmsegmentation/pretrain
+mmsegmentation/pretrain/*
+!mmsegmentation/pretrain/README.md
+
+# baseline_code
 baseline_code___/*
