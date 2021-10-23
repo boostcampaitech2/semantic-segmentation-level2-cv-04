@@ -12,4 +12,6 @@
 
 # python tools/train.py configs/_custom_/models/upernet_swin_b.py --seed 42 --work-dir ../output/mmseg/upernet_swin_b_stratified
 
-python tools/train.py configs/_custom_/models/upernet_deit_b_ln_min.py --seed 42 --work-dir ../output/mmseg/upernet_deit_b_ln_min
+#python tools/train.py configs/_custom_/models/upernet_deit_b_ln_min.py --seed 42 --work-dir ../output/mmseg/upernet_deit_b_ln_min 
+
+python tools/train.py configs/_custom_/models/upernet_deit_b_ln_min.py --seed 42 --work-dir ../output/mmseg/upernet_deit_b_ln_min --load-from ../output/mmseg/upernet_deit_b_ln_min/latest.pth --resume-from ../output/mmseg/upernet_deit_b_ln_min/latest.pth

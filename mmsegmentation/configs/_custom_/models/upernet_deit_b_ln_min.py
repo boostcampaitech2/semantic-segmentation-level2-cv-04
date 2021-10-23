@@ -64,6 +64,7 @@ model = dict(
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))  # yapf: disable
 
+
 optimizer = dict(
     _delete_=True,
     type='AdamW',
@@ -76,7 +77,12 @@ optimizer = dict(
             'cls_token': dict(decay_mult=0.),
             'norm': dict(decay_mult=0.)
         }))
+        
+'''
+runner = dict(type='EpochBasedRunner', max_epochs=100)
+data = dict(samples_per_gpu=10)        
+'''
 
-runner = dict(type='EpochBasedRunner', max_epochs=50)
+checkpoint_config = dict(interval=5)
+runner = dict(type='EpochBasedRunner', max_epochs=200)
 data = dict(samples_per_gpu=10)
-
