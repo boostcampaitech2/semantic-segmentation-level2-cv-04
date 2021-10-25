@@ -26,6 +26,7 @@ import segmentation_models_pytorch as smp
 from train import train
 from dataset import CustomDataLoader
 from annotation import annotation
+from transform import transform
 
 # 전처리를 위한 라이브러리
 import albumentations as A
@@ -47,6 +48,9 @@ def arg_parser():
     parser.add_argument('--num_epochs', default=30, type=int)
     parser.add_argument('--learning_rate', default=0.0001, type=float)
     parser.add_argument('--scheduler', default='cosine', type=str)
+
+    # transformation
+    parser.add_argument('--transform', default='coffee', type=str)
 
     return parser
 
@@ -87,17 +91,11 @@ def main(args):
         return tuple(zip(*batch))
 
     # Data Augmentation
-    train_transform = A.Compose([
-        ToTensorV2()
-    ])
+    train_transform = transform(args.transform)
 
-    val_transform = A.Compose([
-        ToTensorV2()
-    ])
+    val_transform = transform(args.transform)
 
-    test_transform = A.Compose([
-        ToTensorV2()
-    ])
+    test_transform = transform(args.transform)
 
     # create own Dataset 1 (skip)
     # validation set을 직접 나누고 싶은 경우

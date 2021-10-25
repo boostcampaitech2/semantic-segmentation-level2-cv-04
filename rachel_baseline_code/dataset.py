@@ -41,8 +41,7 @@ class CustomDataLoader(Dataset):
         
         # cv2 를 활용하여 image 불러오기
         images = cv2.imread(os.path.join(self.dataset_path, image_infos['file_name']))
-        images = cv2.cvtColor(images, cv2.COLOR_BGR2RGB).astype(np.float32)
-        images /= 255.0
+        images = cv2.cvtColor(images, cv2.COLOR_BGR2RGB)
         
         if (self.mode in ('train', 'val')):
             ann_ids = self.coco.getAnnIds(imgIds=image_infos['id'])
@@ -57,7 +56,7 @@ class CustomDataLoader(Dataset):
             # Background = 0
             masks = np.zeros((image_infos["height"], image_infos["width"]))
             # General trash = 1, ... , Cigarette = 10
-            anns = sorted(anns, key=lambda idx : len(idx['segmentation'][0]), reverse=True)
+            anns = sorted(anns, key=lambda idx : idx['area'], reverse=True)
             for i in range(len(anns)):
                 className = get_classname(anns[i]['category_id'], cats)
                 pixel_value = self.category_names.index(className)
