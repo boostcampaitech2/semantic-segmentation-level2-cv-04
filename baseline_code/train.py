@@ -37,6 +37,7 @@ def main(custom_dir):
 	outputPath = os.path.join(arg.output_path, arg.custom_name)
 	# os.makedirs(outputPath, exist_ok=False)
 	shutil.copytree(f"custom/{custom_dir}",outputPath)
+	os.makedirs(outputPath+"/models")
 	
 	# wandb
 	from utils.wandb_method import WandBMethod
