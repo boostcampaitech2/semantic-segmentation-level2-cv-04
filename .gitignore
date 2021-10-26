@@ -10,11 +10,12 @@ input/data/*
 
 # baseline
 baseline_code/wandb/*
+!baseline_code/custom/sample
+!baseline_code/custom/sample/settings
+!baseline_code/custom/sample/submission/*
 baseline_code/custom/*
-!baseline_code/custom/sample/*
 
 #temp
-baseline_code___/*
 baseline_code/tempSettings/*
 
 # output
