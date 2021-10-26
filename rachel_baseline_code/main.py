@@ -74,12 +74,16 @@ def main(args):
         lr_scheduler = optim.lr_scheduler.MultiplicativeLR(optimizer, lr_lambda=lmbda)
 
     # 모델 저장 이름 정의
-    now = datetime.now(timezone('Asia/Seoul'))
-    n_time = now.strftime("%m_%d_%H:%M")
+    saved_dir = os.path.join('./saved', args.exp_name)
 
-    saved_dir = os.path.join('./saved', args.exp_name + "/" + n_time)
+    # If saved_dir already exits, create a new dir
+    i = 2
+    while os.path.exists(saved_dir):
+        saved_dir = os.path.join('./saved', args.exp_name + "_" + str(i))
+        i += 1
     os.makedirs(saved_dir, exist_ok=True)
     
+    # Model pickle file name
     file_name = args.exp_name + ".pt"
 
     # 인자 로그에 저장
@@ -92,6 +96,8 @@ def main(args):
 
     with open(f"{saved_dir}/config.yaml", 'w') as file:
         yaml.dump(dict_file, file)
+    
+    exit(0)
 
     # 모델 학습
     train(args.num_epochs, model, train_loader, val_loader, criterion,
