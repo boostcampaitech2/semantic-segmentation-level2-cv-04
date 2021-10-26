@@ -1,0 +1,1 @@
+python inference.py --yaml_path ./saved/test1/10_26_20:28/config.yaml

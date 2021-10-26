@@ -1,4 +1,5 @@
 import argparse
+import yaml
 
 def arg_parser():
     parser = argparse.ArgumentParser('Semantic Segmentation', add_help=False)
@@ -13,8 +14,28 @@ def arg_parser():
     parser.add_argument('--learning_rate', default=0.0001, type=float)
     parser.add_argument('--scheduler', default='cosine', type=str)
 
-    # transformation
+    # Transformation
     parser.add_argument('--transform', default='coffee', type=str)
 
     return parser
 
+def arg_parser_infer():
+    parser = argparse.ArgumentParser('Semantic Segmentation Inference', add_help=False)
+
+    # Config file path from training
+    parser.add_argument('--yaml_path', type=str)
+
+    # Transformation for TTA
+    parser.add_argument('--transform', default='water', type=str)
+
+    # Read yaml file
+    args = parser.parse_args()
+    with open(args.yaml_path, 'r') as stream:
+        data_loaded = yaml.safe_load(stream)
+
+    # Import parameters from yaml
+    parser.add_argument('--seed', default=data_loaded['seed'], type=int)
+    parser.add_argument('--batch_size', default=data_loaded['batch_size'], type=int)
+    parser.add_argument('--model_path', default=data_loaded['output_path'], type=str)
+
+    return parser
