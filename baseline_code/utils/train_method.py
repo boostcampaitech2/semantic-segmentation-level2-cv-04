@@ -4,10 +4,12 @@ from utils.utils import add_hist, label_accuracy_score
 from utils.wandb_method import WandBMethod
 from utils.tqdm import TQDM
 from utils.save_helper import SaveHelper
+from torch.cuda.amp import GradScaler, autocast
 
 def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, scheduler, saved_dir, save_capacity, device, doWandb):
     n_class = 11
-    
+    scaler = GradScaler(enabled=True)
+
     saveHelper = SaveHelper(save_capacity, saved_dir)
     mainPbar = TQDM.makeMainProcessBar(num_epochs)
 
@@ -26,14 +28,16 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             # device 할당
             model = model.to(device)
             
-            # inference
-            outputs = model(images)
-            
-            # loss 계산 (cross entropy loss)
-            loss = criterion(outputs, masks)
             optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            
+            with autocast(True):
+                outputs = model(images)
+                loss = criterion(outputs, masks)
+
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+
             scheduler.step()
             
             outputs = torch.argmax(outputs, dim=1).detach().cpu().numpy()
@@ -48,13 +52,13 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             if doWandb:
                 WandBMethod.trainLog(loss, acc, scheduler.get_last_lr())
 
-        avrg_loss , mIoU= validation(epoch, model, val_loader, criterion, device, doWandb)
+        avrg_loss ,mIoU = validation(epoch, model, val_loader, criterion, device, doWandb)
         TQDM.setMainPbarPostInValid(mainPbar,avrg_loss)
 
-        if saveHelper.checkBestLoss(avrg_loss, epoch):
+        if saveHelper.checkBestLoss(mIoU, epoch):
             TQDM.setMainPbarDescInSaved(mainPbar,epoch,mIoU)
             saveHelper.removeModel()
-            saveHelper.saveModel(epoch,model)
+            saveHelper.saveModel(epoch,model,optimizer,scheduler)
             
     # saveHelper.renameBestModel() #생각해보니 best일때만 저장되니까 젤높은숫자가 best임
 
@@ -63,6 +67,7 @@ def validation(epoch, model, valid_loader, criterion, device, doWandb):
     with torch.no_grad():
         n_class = 11
         total_loss = 0
+        total_mIoU = 0
         cnt = 0
         
         hist = np.zeros((n_class, n_class))
@@ -86,8 +91,6 @@ def validation(epoch, model, valid_loader, criterion, device, doWandb):
             
             outputs = model(images)
             loss = criterion(outputs, masks)
-            total_loss += loss
-            cnt += 1
             
             outputs = torch.argmax(outputs, dim=1).detach().cpu().numpy()
             masks = masks.detach().cpu().numpy()
@@ -95,13 +98,21 @@ def validation(epoch, model, valid_loader, criterion, device, doWandb):
             hist = add_hist(hist, masks, outputs, n_class=n_class)
             acc, acc_cls, acc_clsmean, mIoU, fwavacc, IoU = label_accuracy_score(hist)
 
-            TQDM.setPbarPostInStep(pbar,acc,acc_clsmean,loss,mIoU)
+
+            total_loss += loss
+            total_mIoU += mIoU
+            cnt += 1
+
+            TQDM.setPbarPostInStep(pbar,acc,acc_clsmean,loss,total_mIoU/cnt)
+
             if step==targetStep:
                 targetImages, targetOutputs, targetMasks = images.detach().cpu().numpy(), outputs, masks
 
-        if doWandb:
-            WandBMethod.validLog(IoU, acc_cls, acc_clsmean, acc, mIoU, targetImages, targetOutputs, targetMasks)
-      
         avrg_loss = total_loss / cnt
+        avrg_mIoU = total_mIoU / cnt
+
+        if doWandb:
+            WandBMethod.validLog(IoU, acc_cls, acc_clsmean, acc, avrg_mIoU, targetImages, targetOutputs, targetMasks)
+      
         
-    return avrg_loss, mIoU
+    return avrg_loss, avrg_mIoU
