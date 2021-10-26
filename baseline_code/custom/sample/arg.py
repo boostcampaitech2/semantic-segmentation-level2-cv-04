@@ -12,10 +12,12 @@ def getArg():
 	arg.image_root = "../input/data"
 	arg.train_json = "train_0.json"
 	arg.val_json = "valid_0.json"
+	arg.test_json = "test.json"
 	arg.output_path = "../output"
 
 	arg.train_worker = 4
 	arg.valid_worker = 4
+	arg.test_worker = 4
 
 	arg.wandb = True
 	arg.wandb_project = "segmentation"

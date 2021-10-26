@@ -15,6 +15,7 @@ baseline_code/custom/*
 
 #temp
 baseline_code___/*
+baseline_code/tempSettings/*
 
 # output
 output/*
