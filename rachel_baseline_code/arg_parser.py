@@ -34,6 +34,7 @@ def arg_parser_infer():
         data_loaded = yaml.safe_load(stream)
 
     # Import parameters from yaml
+    parser.add_argument('--exp_name', default=data_loaded['exp_name'], type=str)
     parser.add_argument('--seed', default=data_loaded['seed'], type=int)
     parser.add_argument('--batch_size', default=data_loaded['batch_size'], type=int)
     parser.add_argument('--model_path', default=data_loaded['output_path'], type=str)
