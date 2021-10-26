@@ -18,7 +18,7 @@ from tqdm import tqdm
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
-def test(model, test_loader, device):
+def inference(model, test_loader, device):
     size = 256
     transform = A.Compose([A.Resize(size, size)])
     print('Start prediction.')
@@ -52,17 +52,3 @@ def test(model, test_loader, device):
     file_names = [y for x in file_name_list for y in x]
     
     return file_names, preds_array
-
-# sample_submisson.csv 열기
-submission = pd.read_csv('./submission/sample_submission.csv', index_col=None)
-
-# test set에 대한 prediction
-file_names, preds = test(model, test_loader, device)
-
-# PredictionString 대입
-for file_name, string in zip(file_names, preds):
-    submission = submission.append({"image_id" : file_name, "PredictionString" : ' '.join(str(e) for e in string.tolist())}, 
-                                   ignore_index=True)
-
-# submission.csv로 저장
-submission.to_csv("./submission/fcn_resnet50_best_mIoU_model(pretrained).csv", index=False)

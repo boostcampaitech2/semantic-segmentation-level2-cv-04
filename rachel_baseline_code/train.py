@@ -1,3 +1,4 @@
+from logging import Logger
 import os
 import random
 import time
@@ -17,18 +18,17 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-def save_model(model, saved_dir, file_name='fcn_resnet50_best_model(pretrained).pt'):
-    check_point = {'net': model.state_dict()}
+def save_model(model, saved_dir, file_name):
     output_path = os.path.join(saved_dir, file_name)
     torch.save(model, output_path)
 
-def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_scheduler, saved_dir, val_every, device, sorted_df):
-    print(f'Start training..')
+def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_scheduler, saved_dir, file_name, device, sorted_df, val_every=1):
+    logger = make_logger(saved_dir, "train")
+
+    logger.info(f'Start training..')
     n_class = 11
     best_loss = 9999999
     best_mIoU = 0
-
-    logger = make_logger("train")
 
     for epoch in range(num_epochs):
         model.train()
@@ -62,21 +62,23 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_s
             
             # step 주기에 따른 loss 출력
             if (step + 1) % 25 == 0:
-                logger.info(f'Epoch [{epoch+1}/{num_epochs}], Step [{step+1}/{len(data_loader)}], \
-                        Loss: {round(loss.item(),4)}, mIoU: {round(mIoU,4)}')
+                logger.info(
+                    f'Epoch [{epoch+1}/{num_epochs}], Step [{step+1}/{len(data_loader)}], Loss: {round(loss.item(),4)}, mIoU: {round(mIoU,4)}')
              
         # validation 주기에 따른 loss 출력 및 best model 저장
         if (epoch + 1) % val_every == 0:
-            avrg_loss, mIoU_val = validation(epoch + 1, model, val_loader, criterion, device, sorted_df)
+            avrg_loss, mIoU_val = validation(epoch + 1, model, val_loader, criterion, saved_dir, device, sorted_df)
             if mIoU_val > best_mIoU:
                 logger.info(f"Best performance at epoch: {epoch + 1}")
                 logger.info(f"Save model in {saved_dir}")
                 best_mIoU = mIoU_val
-                save_model(model, saved_dir)
+                save_model(model, saved_dir, file_name)
 
 
-def validation(epoch, model, data_loader, criterion, device, sorted_df):
-    print(f'Start validation #{epoch}')
+def validation(epoch, model, data_loader, criterion, saved_dir, device, sorted_df):
+    logger = make_logger(saved_dir, "validation")
+    
+    logger.info(f'Start validation #{epoch}')
     model.eval()
 
     with torch.no_grad():
@@ -109,8 +111,7 @@ def validation(epoch, model, data_loader, criterion, device, sorted_df):
         IoU_by_class = [{classes : round(IoU,4)} for IoU, classes in zip(IoU , sorted_df['Categories'])]
         
         avrg_loss = total_loss / cnt
-        print(f'Validation #{epoch}  Average Loss: {round(avrg_loss.item(), 4)}, Accuracy : {round(acc, 4)}, \
-                mIoU: {round(mIoU, 4)}')
-        print(f'IoU by class : {IoU_by_class}')
+        logger.info(f'Validation #{epoch}  Average Loss: {round(avrg_loss.item(), 4)}, Accuracy : {round(acc, 4)}, mIoU: {round(mIoU, 4)}')
+        logger.info(f'IoU by class : {IoU_by_class}')
         
     return avrg_loss, mIoU

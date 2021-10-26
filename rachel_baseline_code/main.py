@@ -1,3 +1,4 @@
+from logging import Logger
 import os
 import random
 import argparse
@@ -28,6 +29,8 @@ from dataset import CustomDataLoader
 from annotation import annotation
 from transform import transform
 from arg_parser import arg_parser
+from logger import make_logger
+from inference import inference
 
 # 전처리를 위한 라이브러리
 import albumentations as A
@@ -38,6 +41,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
 from matplotlib.patches import Patch
 import webcolors
+
+from datetime import datetime
+from pytz import timezone
 
 
 def seed_everything(random_seed: int = 42):
@@ -150,34 +156,53 @@ def main(args):
         def lmbda(epoch): return 0.98739
         lr_scheduler = optim.lr_scheduler.MultiplicativeLR(optimizer, lr_lambda=lmbda)
 
-    # 모델 저장 함수 정의
-    val_every = 1
+    # 모델 저장 이름 정의
+    now = datetime.now(timezone('Asia/Seoul'))
+    n_time = now.strftime("%m_%d_%H:%M")
 
-    saved_dir = './saved'
-    if not os.path.isdir(saved_dir):
-        os.mkdir(saved_dir)
+    saved_dir = os.path.join('./saved', args.exp_name + "/" + n_time)
+    os.makedirs(saved_dir, exist_ok=True)
+    
+    file_name = args.exp_name + ".pt"
+
+    # 인자 로그에 저장
+    logger = make_logger(saved_dir, "main")
+    logger.info(' '.join(f'{k}={v}' for k, v in vars(args).items()))
 
     # 모델 학습
     train(args.num_epochs, model, train_loader, val_loader, criterion,
-          optimizer, lr_scheduler, saved_dir, val_every, device, sorted_df)
+          optimizer, lr_scheduler, saved_dir, file_name, device, sorted_df)
+    
+    # # best model 저장된 경로
+    # model_path = './saved/fcn_resnet50_best_model(pretrained).pt'
 
-    # best model 저장된 경로
-    model_path = './saved/fcn_resnet50_best_model(pretrained).pt'
+    # # best model 불러오기
+    # checkpoint = torch.load(model_path, map_location=device)
+    # state_dict = checkpoint.state_dict()
+    # model.load_state_dict(state_dict)
 
-    # best model 불러오기
-    checkpoint = torch.load(model_path, map_location=device)
-    state_dict = checkpoint.state_dict()
-    model.load_state_dict(state_dict)
+    # model = model.to(device)
+    # # 추론을 실행하기 전에는 반드시 설정 (batch normalization, dropout 를 평가 모드로 설정)
+    # # model.eval()
 
-    model = model.to(device)
-    # 추론을 실행하기 전에는 반드시 설정 (batch normalization, dropout 를 평가 모드로 설정)
-    # model.eval()
+    # # sample_submisson.csv 열기
+    # submission = pd.read_csv('./submission/sample_submission.csv', index_col=None)
+
+    # # test set에 대한 prediction
+    # file_names, preds = inference(model, test_loader, device)
+
+    # # PredictionString 대입
+    # for file_name, string in zip(file_names, preds):
+    #     submission = submission.append({"image_id" : file_name, "PredictionString" : ' '.join(str(e) for e in string.tolist())}, 
+    #                                 ignore_index=True)
+
+    # # submission.csv로 저장
+    # submission.to_csv("./submission/fcn_resnet50_best_mIoU_model(pretrained).csv", index=False)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Semantic Segmentation', parents=[arg_parser()])
     args = parser.parse_args()
-    print(' '.join(f'{k}={v}' for k, v in vars(args).items()))
     seed_everything(args.seed)
     main(args)

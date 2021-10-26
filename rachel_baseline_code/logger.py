@@ -1,6 +1,7 @@
 import logging
+import os
 
-def make_logger(name=None):
+def make_logger(path, name=None):
     #1 logger instance를 만든다.
     logger = logging.getLogger(name)
 
@@ -12,7 +13,8 @@ def make_logger(name=None):
     
     #4 handler instance 생성
     console = logging.StreamHandler()
-    file_handler = logging.FileHandler(filename="performance.log")
+    filename = os.path.join(path, "performance.log")
+    file_handler = logging.FileHandler(filename=filename)
     
     #5 handler 별로 다른 level 설정
     console.setLevel(logging.INFO)

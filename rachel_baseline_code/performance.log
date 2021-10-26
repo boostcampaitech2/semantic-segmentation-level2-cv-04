@@ -1,0 +1,8 @@
+2021-10-26 05:41:49,116 - main - INFO - seed=42 batch_size=16 num_epochs=1 learning_rate=0.0001 scheduler=cosine transform=coffee
+2021-10-26 05:42:00,238 - train - INFO - Start training..
+2021-10-26 05:42:15,468 - train - INFO - Epoch [1/1], Step [25/164],                         Loss: 1.3573, mIoU: 0.1703
+2021-10-26 05:42:26,941 - train - INFO - Epoch [1/1], Step [50/164],                         Loss: 1.0022, mIoU: 0.1804
+2021-10-26 05:42:38,286 - train - INFO - Epoch [1/1], Step [75/164],                         Loss: 0.9338, mIoU: 0.1793
+2021-10-26 05:42:49,702 - train - INFO - Epoch [1/1], Step [100/164],                         Loss: 0.7476, mIoU: 0.1758
+2021-10-26 05:43:01,008 - train - INFO - Epoch [1/1], Step [125/164],                         Loss: 1.2368, mIoU: 0.1726
+2021-10-26 05:43:12,504 - train - INFO - Epoch [1/1], Step [150/164],                         Loss: 0.8263, mIoU: 0.1722
