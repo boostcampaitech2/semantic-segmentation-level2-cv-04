@@ -11,6 +11,8 @@ from torch.utils.data import Dataset, DataLoader
 from utils import label_accuracy_score, add_hist
 import cv2
 
+from logger import make_logger
+
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -25,6 +27,8 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_s
     n_class = 11
     best_loss = 9999999
     best_mIoU = 0
+
+    logger = make_logger("train")
 
     for epoch in range(num_epochs):
         model.train()
@@ -58,15 +62,15 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_s
             
             # step 주기에 따른 loss 출력
             if (step + 1) % 25 == 0:
-                print(f'Epoch [{epoch+1}/{num_epochs}], Step [{step+1}/{len(data_loader)}], \
+                logger.info(f'Epoch [{epoch+1}/{num_epochs}], Step [{step+1}/{len(data_loader)}], \
                         Loss: {round(loss.item(),4)}, mIoU: {round(mIoU,4)}')
              
         # validation 주기에 따른 loss 출력 및 best model 저장
         if (epoch + 1) % val_every == 0:
             avrg_loss, mIoU_val = validation(epoch + 1, model, val_loader, criterion, device, sorted_df)
             if mIoU_val > best_mIoU:
-                print(f"Best performance at epoch: {epoch + 1}")
-                print(f"Save model in {saved_dir}")
+                logger.info(f"Best performance at epoch: {epoch + 1}")
+                logger.info(f"Save model in {saved_dir}")
                 best_mIoU = mIoU_val
                 save_model(model, saved_dir)
 

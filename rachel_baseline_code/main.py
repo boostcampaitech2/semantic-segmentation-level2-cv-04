@@ -27,6 +27,7 @@ from train import train
 from dataset import CustomDataLoader
 from annotation import annotation
 from transform import transform
+from arg_parser import arg_parser
 
 # 전처리를 위한 라이브러리
 import albumentations as A
@@ -37,22 +38,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
 from matplotlib.patches import Patch
 import webcolors
-
-
-def arg_parser():
-    parser = argparse.ArgumentParser('Semantic Segmentation', add_help=False)
-
-    # Hyper-parameters
-    parser.add_argument('--seed', default=42, type=int)
-    parser.add_argument('--batch_size', default=16, type=int)
-    parser.add_argument('--num_epochs', default=30, type=int)
-    parser.add_argument('--learning_rate', default=0.0001, type=float)
-    parser.add_argument('--scheduler', default='cosine', type=str)
-
-    # transformation
-    parser.add_argument('--transform', default='coffee', type=str)
-
-    return parser
 
 
 def seed_everything(random_seed: int = 42):
@@ -193,5 +178,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Semantic Segmentation', parents=[arg_parser()])
     args = parser.parse_args()
+    print(' '.join(f'{k}={v}' for k, v in vars(args).items()))
     seed_everything(args.seed)
     main(args)
