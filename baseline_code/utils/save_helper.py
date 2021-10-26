@@ -7,21 +7,21 @@ class SaveHelper:
 		self.savedList = deque()
 		self.capacity = max(capacity,2)
 		self.bestEpoch = 0
-		self.bestLoss = 9999999
-		self.savedDir = saved_dir
+		self.bestIoU = 0
+		self.savedDir = saved_dir+"/models"
 
 	@staticmethod
 	def _fileFormat(epoch):
 		return f"epoch{epoch}.pth"
 
-	def checkBestLoss(self, avrg_loss, epoch):
+	def checkBestLoss(self, avrg_iou, epoch):
 		
-		ok = avrg_loss<self.bestLoss
-		
-		self.best_loss = avrg_loss
-		
-		self.savedList.append(epoch)
-		self.bestEpoch = epoch
+		ok = avrg_iou.item() > self.bestIoU
+
+		if ok:
+			self.bestIoU = avrg_iou.item()	
+			self.savedList.append(epoch)
+			self.bestEpoch = epoch
 
 		return ok
 	
@@ -39,8 +39,16 @@ class SaveHelper:
 		delTarget = self.savedList.popleft()
 		os.remove(self._concatSaveDirByEpoch(delTarget))
 	
-	def saveModel(self,epoch, model):
-		torch.save(model.state_dict(), self._concatSaveDirByEpoch(epoch))
+	def saveModel(self,epoch, model, optimizer, scheduler):
+
+		saveDict = {
+			'epoch' : epoch, 
+			'model': model.state_dict(),
+			'optimizer' : optimizer.state_dict(),
+			'scheduler' : scheduler,
+		}
+
+		torch.save(saveDict, self._concatSaveDirByEpoch(epoch))
   
 	def renameBestModel(self):
 		os.rename(self._concatSaveDirByEpoch(self.bestEpoch),self._concatSaveDir("best.pth"))
