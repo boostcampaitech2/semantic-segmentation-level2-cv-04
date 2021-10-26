@@ -1,6 +1,8 @@
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
+# https://albumentations-demo.herokuapp.com/
+
 def getTransform():
 
   train_transform = A.Compose([
