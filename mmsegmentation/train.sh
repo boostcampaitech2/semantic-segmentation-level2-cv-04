@@ -18,4 +18,8 @@
 
 # python tools/train.py configs/_custom_/models/segformer_b5.py --seed 42 --work-dir ../output/mmseg/segformer_b5 --load-from ../output/mmseg/segformer_b5/latest.pth --resume-from ../output/mmseg/segformer_b5/latest.pth
 
-python tools/train.py configs/_custom_/models/ocrnet_hr48.py --seed 42 --work-dir ../output/mmseg/ocrnet_hr48
+# python tools/train.py configs/_custom_/models/ocrnet_hr48.py --seed 42 --work-dir ../output/mmseg/ocrnet_hr48
+
+# python tools/train.py configs/_custom_/models/danet.py --seed 42 --work-dir ../output/mmseg/danet
+
+python tools/train.py configs/_custom_/models/custom.py --seed 42 --work-dir ../output/mmseg/custom
