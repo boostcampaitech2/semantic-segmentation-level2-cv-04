@@ -1,4 +1,4 @@
-from math import sqrt
+from math import sqrt, floor
 import wandb
 import random
 import cv2
@@ -69,10 +69,10 @@ class WandBMethod:
 	@staticmethod
 	def concatImages(images):
 		length = len(images)
-		squareSide = int(sqrt(length))
+		squareSide = floor(sqrt(length))
 
 		hConcatImgs = []
-		for i in range(0,length,squareSide):
+		for i in range(0,squareSide*squareSide,squareSide):
 			imgList = []
 			for j in range(i,i+squareSide):
 				if images[j].shape == (512,512):
