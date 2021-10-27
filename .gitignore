@@ -11,6 +11,19 @@ input/mmseg
 !input/data/image_reroute.py
 !input/data/json-filename_edit.py
 
+# baseline
+torch_dev/wandb/*
+!torch_dev/custom/sample
+!torch_dev/custom/sample/settings
+!torch_dev/custom/sample/submission/*
+torch_dev/custom/*
+
+#temp
+torch_dev/tempSettings/*
+
+# output
+output/*
+
 # output
 baseline_code/saved
 baseline_code/submission/*
