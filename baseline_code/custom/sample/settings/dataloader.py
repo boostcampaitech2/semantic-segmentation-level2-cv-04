@@ -13,4 +13,4 @@ def getDataloader(trainDataset, validDataset, batch, trainWorker, validWorker):
 
 def getInferenceDataloader(dataset, batch, num_worker):
 
-	return DataLoader(dataset, batch_size=batch, num_worker=num_worker, shuffle= False,collate_fn=collate_fn)
+	return DataLoader(dataset, batch_size=batch, num_workers=num_worker, shuffle= False,collate_fn=collate_fn)
