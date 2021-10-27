@@ -9,10 +9,10 @@ warnings.filterwarnings('ignore')
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
-from utils import label_accuracy_score, add_hist
+from utils.utils import label_accuracy_score, add_hist
 import cv2
 
-from logger import make_logger
+from utils.logger import make_logger
 
 import numpy as np
 import pandas as pd

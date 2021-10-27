@@ -12,3 +12,4 @@ def fcn_resnet50():
     model.classifier[4] = nn.Conv2d(512, 11, kernel_size=1)
 
     return model
+

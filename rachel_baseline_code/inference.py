@@ -4,7 +4,7 @@ import time
 import yaml
 import warnings 
 import argparse
-from arg_parser import arg_parser_infer
+from utils.arg_parser import arg_parser_infer
 warnings.filterwarnings('ignore')
 
 import torch
@@ -13,20 +13,11 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-import models
-from dataset import create_dataloader
+import utils.models as models
+from utils.dataset import create_dataloader
+from utils.utils import seed_everything
 
 import albumentations as A
-
-
-def seed_everything(random_seed: int = 42):
-    torch.manual_seed(random_seed)
-    torch.cuda.manual_seed(random_seed)
-    torch.cuda.manual_seed_all(random_seed)  # if use multi-GPU
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    np.random.seed(random_seed)
-    random.seed(random_seed)
 
 
 def inference(model, test_loader, device):
@@ -95,7 +86,7 @@ def main(args):
                                        ignore_index=True)
 
     # submission.csv로 저장
-    submission.to_csv(f"./submission/{args.model_path}.csv", index=False)
+    submission.to_csv(f"./submission/{args.exp_name}.csv", index=False)
 
 
 if __name__ == '__main__':

@@ -10,33 +10,18 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import models
-import segmentation_models_pytorch as smp
 
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
 from train import train
-import models
-from dataset import create_dataloader
-from annotation import annotation
-from transform import transform
-from arg_parser import arg_parser
-from logger import make_logger
-from inference import inference
-
-from datetime import datetime
-from pytz import timezone
-
-
-def seed_everything(random_seed: int = 42):
-    torch.manual_seed(random_seed)
-    torch.cuda.manual_seed(random_seed)
-    torch.cuda.manual_seed_all(random_seed)  # if use multi-GPU
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-    np.random.seed(random_seed)
-    random.seed(random_seed)
+import utils.models as models
+from utils.dataset import create_dataloader
+from utils.annotation import annotation
+from utils.arg_parser import arg_parser
+from utils.logger import make_logger
+from utils.utils import seed_everything
 
 
 def main(args):
@@ -96,8 +81,6 @@ def main(args):
 
     with open(f"{saved_dir}/config.yaml", 'w') as file:
         yaml.dump(dict_file, file)
-    
-    exit(0)
 
     # 모델 학습
     train(args.num_epochs, model, train_loader, val_loader, criterion,
