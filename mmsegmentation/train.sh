@@ -22,7 +22,7 @@
 
 # python tools/train.py configs/_custom_/models/danet.py --seed 42 --work-dir ../output/mmseg/danet
 
-python tools/train.py configs/_custom_/models/upernet_swin_b.py --seed 42 --work-dir ../output/mmseg/upernet_swin_b_base
+# python tools/train.py configs/_custom_/models/upernet_swin_b.py --seed 42 --work-dir ../output/mmseg/upernet_swin_b_base
 
 python tools/train.py configs/_custom_/models/upernet_swin_b_flip.py --seed 42 --work-dir ../output/mmseg/upernet_swin_b_flip
 
