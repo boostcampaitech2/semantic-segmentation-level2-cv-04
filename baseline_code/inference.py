@@ -4,8 +4,6 @@ import os
 import shutil
 from importlib import import_module
 
-from torch.serialization import save
-
 from dataset.base_dataset import CustomDataset
 
 def getArgument():
@@ -24,6 +22,7 @@ def main(custom_dir, model_name):
 
 	if os.path.isdir("./tempSettings"):
 		shutil.rmtree("./tempSettings")
+	
 	shutil.copytree(f"../output/{custom_dir}/settings/", "./tempSettings/")
 
 	arg = getattr(import_module(f"tempSettings.arg"), "getArg")()
@@ -34,8 +33,9 @@ def main(custom_dir, model_name):
 	model = getattr(import_module(f"tempSettings.model"), "getModel")()
 	dataloader = getattr(import_module(f"tempSettings.dataloader"), "getInferenceDataloader")(dataset, arg.batch, arg.test_worker)
 
-	stateDict = torch.load(f"../output/{custom_dir}/{model_name}.pth", map_location=device)
-	model.load_state_dict(stateDict)
+	# TODO 경로보고 수정
+	stateDict = torch.load(f"../output/{custom_dir}/models/{model_name}.pth", map_location=device)
+	model.load_state_dict(stateDict['model'])
 	
 	file_names, preds_array = test(model, dataloader, device)
 	saveSubmission(file_names,preds_array,arg.output_path, arg.custom_name)
