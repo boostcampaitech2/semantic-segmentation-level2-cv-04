@@ -13,7 +13,7 @@ model = dict(
     backbone=dict(
         type='SwinTransformer',
         pretrain_img_size=384,
-        embed_dims=128,
+        embed_dims=192,
         patch_size=4,
         mlp_ratio=4,
         depths=[2, 2, 18, 2],
@@ -74,5 +74,5 @@ optimizer = dict(
 
 # epoch, batchsize settings
 checkpoint_config = dict(interval=5)
-runner = dict(type='EpochBasedRunner', max_epochs=40)
+runner = dict(type='EpochBasedRunner', max_epochs=50)
 data = dict(samples_per_gpu=10)
