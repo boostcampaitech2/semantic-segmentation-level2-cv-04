@@ -9,14 +9,14 @@
 input/data/*
 
 # baseline
-baseline_code/wandb/*
-!baseline_code/custom/sample
-!baseline_code/custom/sample/settings
-!baseline_code/custom/sample/submission/*
-baseline_code/custom/*
+torch_dev/wandb/*
+!torch_dev/custom/sample
+!torch_dev/custom/sample/settings
+!torch_dev/custom/sample/submission/*
+torch_dev/custom/*
 
 #temp
-baseline_code/tempSettings/*
+torch_dev/tempSettings/*
 
 # output
 output/*
