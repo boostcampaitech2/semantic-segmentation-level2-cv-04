@@ -13,3 +13,5 @@ def fcn_resnet50():
 
     return model
 
+def model1():
+    model = smp.DeepLabV3Plus

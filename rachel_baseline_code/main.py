@@ -1,8 +1,6 @@
 import os
-import random
 import argparse
 import warnings
-from torch.serialization import save
 import yaml
 warnings.filterwarnings('ignore')
 
@@ -11,13 +9,9 @@ import torch.nn as nn
 import torch.optim as optim
 from torchvision import models
 
-import numpy as np
-import pandas as pd
-from tqdm import tqdm
-
 from train import train
-import utils.models as models
-from utils.dataset import create_dataloader
+import framework.models as models
+from framework.dataset import create_dataloader
 from utils.annotation import annotation
 from utils.arg_parser import arg_parser
 from utils.logger import make_logger

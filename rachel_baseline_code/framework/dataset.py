@@ -1,22 +1,15 @@
 import os
-import random
-import time
-import json
 import warnings 
 warnings.filterwarnings('ignore')
 
 import torch
-import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
-from utils import label_accuracy_score, add_hist
+from torch.utils.data import Dataset
 import cv2
 from pycocotools.coco import COCO
 
 import numpy as np
-import pandas as pd
-from tqdm import tqdm
 
-from annotation import annotation
+from utils.annotation import annotation
 from transform import transform
 
 

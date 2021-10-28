@@ -1,13 +1,9 @@
-import os
-import random
-import time
 import json
 import warnings 
 warnings.filterwarnings('ignore')
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 
 
 def annotation(dataset_path):
