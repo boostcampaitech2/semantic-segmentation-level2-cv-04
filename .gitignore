@@ -11,7 +11,9 @@ input/mmseg
 # output
 baseline_code/saved
 baseline_code/submission/*
-output
+output/*
+!output/CRF.ipynb
+!output/csv_visualize.ipynb
 
 # mmsegmentation
 mmsegmentation/*
@@ -21,7 +23,6 @@ mmsegmentation/configs/*
 !mmsegmentation/train.sh
 !mmsegmentation/visualize.sh
 !mmsegmentation/inference.ipynb
-!mmsegmentation/csv_visualize.ipynb
 !mmsegmentation/pretrain
 mmsegmentation/pretrain/*
 !mmsegmentation/pretrain/README.md
