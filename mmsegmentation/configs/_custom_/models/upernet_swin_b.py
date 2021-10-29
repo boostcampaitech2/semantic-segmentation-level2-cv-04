@@ -64,7 +64,7 @@ optimizer = dict(
     type='AdamW',
     lr=0.00006,
     betas=(0.9, 0.999),
-    weight_decay=0.01,
+    weight_decay=0.0001,
     paramwise_cfg=dict(
         custom_keys={
             'absolute_pos_embed': dict(decay_mult=0.),
@@ -74,5 +74,5 @@ optimizer = dict(
 
 # epoch, batchsize settings
 checkpoint_config = dict(interval=5)
-runner = dict(type='EpochBasedRunner', max_epochs=40)
+runner = dict(type='EpochBasedRunner', max_epochs=50)
 data = dict(samples_per_gpu=10)

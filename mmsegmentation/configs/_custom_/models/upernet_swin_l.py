@@ -1,5 +1,5 @@
 _base_ = [
-    '../datasets/dataset_augment.py',
+    '../datasets/dataset_alldata.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
@@ -44,7 +44,7 @@ model = dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
     auxiliary_head=dict(
         type='FCNHead',
-        in_channels=512,
+        in_channels=768,
         in_index=2,
         channels=256,
         num_convs=1,
@@ -75,4 +75,4 @@ optimizer = dict(
 # epoch, batchsize settings
 checkpoint_config = dict(interval=5)
 runner = dict(type='EpochBasedRunner', max_epochs=50)
-data = dict(samples_per_gpu=10)
+data = dict(samples_per_gpu=6)

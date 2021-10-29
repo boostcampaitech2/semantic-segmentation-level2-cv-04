@@ -30,9 +30,15 @@
 
 # python tools/train.py configs/_custom_/models/upernet_swin_b_bright.py --seed 42 --work-dir ../output/mmseg/upernet_swin_b_bright
 
+# python tools/train.py configs/_custom_/models/upernet_swin_l.py --seed 42 --work-dir ../output/mmseg/upernet_swin_l
 
-python tools/train.py configs/_custom_/models/upernet_swin_l.py --seed 42 --work-dir ../output/mmseg/upernet_swin_l
+# python tools/train.py configs/_custom_/models/upernet_swin_b.py --seed 42 --work-dir ../output/mmseg/upernet_swin_b
 
-python tools/train.py configs/_custom_/models/upernet_swin_b.py --seed 42 --work-dir ../output/mmseg/upernet_swin_b
+# python tools/train.py configs/_custom_/models/dnl.py --seed 42 --work-dir ../output/mmseg/dnl
 
+# python tools/train.py configs/_custom_/models/upernet_swin_b.py --seed 42 --work-dir ../output/mmseg/upernet_swin_b --load-from ../output/mmseg/upernet_swin_b/epoch_40.pth --resume-from ../output/mmseg/upernet_swin_b/epoch_40.pth
 
+# python tools/train.py configs/_custom_/models/upernet_swin_l.py --seed 42 --work-dir ../output/mmseg/upernet_swin_l_augment --load-from ../output/mmseg/upernet_swin_l_augment/latest.pth --resume-from ../output/mmseg/upernet_swin_l_augment/latest.pth
+
+python tools/train.py configs/_custom_/models/upernet_swin_l.py --seed 42 --work-dir ../output/mmseg/upernet_swin_l_all_data --no-validate
+python tools/train.py configs/_custom_/models/upernet_swin_l.py --seed 4 --work-dir ../output/mmseg/upernet_swin_l_all_data --no-validate
