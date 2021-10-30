@@ -1,5 +1,5 @@
 _base_ = [
-    '../datasets/dataset.py',
+    '../datasets/dataset_augment.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
@@ -51,7 +51,7 @@ model = dict(
 
 # epoch, batchsize settings
 checkpoint_config = dict(interval=5)
-runner = dict(type='EpochBasedRunner', max_epochs=70)
+runner = dict(type='EpochBasedRunner', max_epochs=60)
 data = dict(samples_per_gpu=12)
 
 '''

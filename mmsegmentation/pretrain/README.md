@@ -21,3 +21,5 @@ segformer : python tools/model_converters/swin2mmseg.py https://download.openmml
 
 ---
 
+SETR : python tools/model_converters/vit2mmseg.py https://download.openmmlab.com/mmsegmentation/v0.5/setr/setr_mla_512x512_160k_b8_ade20k/setr_mla_512x512_160k_b8_ade20k_20210619_191118-c6d21df0.pth pretrain/vit_large_patch16_384.pth
+
