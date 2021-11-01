@@ -5,14 +5,28 @@ import torch
 import pandas as pd
 import numpy as np
 import yaml
-from importlib import import_module
+import ttach as tta
+
 from tools import test
-from data_set.data_augmentation import TestAugmentation, get_transform
+from data_set.data_augmentation import get_transform
 from data_set.data_set import CustomDataSet, collate_fn
+from model.custom_encoder import register_encoder
+
 import segmentation_models_pytorch as smp
 
 @torch.no_grad()
 def inference(cfg, device):
+    # custom encoder smp에 등록
+    register_encoder()
+
+    # TTA transform
+    tta_transforms = tta.Compose(
+    [
+        tta.HorizontalFlip(),
+        tta.VerticalFlip(),
+        tta.Scale(scales=[0.5, 0.75, 1.0, 1.25, 1.5])
+    ])
+
     dataset_path  = '../input/data'
     test_path = '../input/data/test.json'
     test_transform = get_transform('test_transform')
@@ -37,11 +51,12 @@ def inference(cfg, device):
     # 추론을 실행하기 전에는 반드시 설정 (batch normalization, dropout 를 평가 모드로 설정)
     model.eval()
 
+    tta_model = tta.SegmentationTTAWrapper(model, tta_transforms, merge_mode='mean')
     # sample_submisson.csv 열기
     submission = pd.read_csv('./submission/sample_submission.csv', index_col=None)
 
     # test set에 대한 prediction
-    file_names, preds = test(model, test_loader, device)
+    file_names, preds = test(tta_model, test_loader, device)
 
     # PredictionString 대입
     for file_name, string in zip(file_names, preds):
