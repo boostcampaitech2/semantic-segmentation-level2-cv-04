@@ -42,4 +42,9 @@
 
 # python tools/train.py configs/_custom_/models/upernet_swin_l.py --seed 42 --work-dir ../output/mmseg/upernet_swin_l_augment2
 
-python tools/train.py configs/_custom_/models/setr_pup.py --seed 42 --work-dir ../output/mmseg/setr_pup
+# python tools/train.py configs/_custom_/models/setr_pup.py --seed 42 --work-dir ../output/mmseg/setr_pup
+
+# python tools/train.py configs/_custom_/models/upernet_swin_l_dice.py --seed 42 --work-dir ../output/mmseg/upernet_swin_l_dice --load-from ../output/mmseg/upernet_swin_l_augment2/latest.pth --resume-from ../output/mmseg/upernet_swin_l_augment2/latest.pth
+
+# python tools/train.py configs/_custom_/models/upernet_swin_l.py --seed 42 --work-dir ../output/mmseg/upernet_swin_l_alldata --no-validate
+# python tools/train.py configs/_custom_/models/upernet_swin_l.py --seed 4 --work-dir ../output/mmseg/upernet_swin_l_alldata --no-validate

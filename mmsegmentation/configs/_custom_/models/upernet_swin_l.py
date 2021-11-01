@@ -1,5 +1,5 @@
 _base_ = [
-    '../datasets/dataset_augment.py',
+    '../datasets/dataset_alldata.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
@@ -74,5 +74,5 @@ optimizer = dict(
 
 # epoch, batchsize settings
 checkpoint_config = dict(interval=5)
-runner = dict(type='EpochBasedRunner', max_epochs=45)
+runner = dict(type='EpochBasedRunner', max_epochs=50)
 data = dict(samples_per_gpu=6)

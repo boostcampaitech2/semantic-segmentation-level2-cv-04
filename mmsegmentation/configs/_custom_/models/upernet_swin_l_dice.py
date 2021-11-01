@@ -41,7 +41,7 @@ model = dict(
         norm_cfg=norm_cfg,
         align_corners=False,
         loss_decode=dict(
-            type='SoftCrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
+            type='DiceLoss', loss_weight=1.0)),
     auxiliary_head=dict(
         type='FCNHead',
         in_channels=768,
@@ -54,7 +54,7 @@ model = dict(
         norm_cfg=norm_cfg,
         align_corners=False,
         loss_decode=dict(
-            type='SoftCrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),
+            type='DiceLoss', loss_weight=0.4)),
     # model training and testing settings
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))
@@ -74,5 +74,5 @@ optimizer = dict(
 
 # epoch, batchsize settings
 checkpoint_config = dict(interval=5)
-runner = dict(type='EpochBasedRunner', max_epochs=45)
+runner = dict(type='EpochBasedRunner', max_epochs=60)
 data = dict(samples_per_gpu=6)

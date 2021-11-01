@@ -16,13 +16,30 @@ albu_train_transforms = [
     dict(
     type='OneOf',
     transforms=[
-        dict(type='Flip',p=0.5),
-        dict(type='RandomRotate90',p=1.0)
+        dict(type='Flip', p=1.0),
+        dict(type='RandomRotate90', p=1.0),
+        dict(type='Rotate', limit=(30,30), p=1.0),
+        dict(type='Rotate', limit=(-30,-30), p=1.0),
     ],
     p=0.5),
-    dict(type='RandomBrightnessContrast',brightness_limit=0.1, contrast_limit=0.15, p=0.5),
-    # dict(type='HueSaturationValue', hue_shift_limit=15, sat_shift_limit=25, val_shift_limit=10, p=0.5),
-    # dict(type='GaussNoise', p=0.3),
+    dict(
+    type='OneOf',
+    transforms=[
+        dict(type='RandomBrightnessContrast',brightness_limit=0.1, contrast_limit=0.15, p=1.0),
+        dict(type='CLAHE', clip_limit=4.0, tile_grid_size=(8, 8), always_apply=False, p=1.0),
+        dict(type='HueSaturationValue', hue_shift_limit=15, sat_shift_limit=25, val_shift_limit=10, p=1.0),
+    ],
+    p=0.5),
+    
+    dict(
+    type='OneOf',
+    transforms=[
+        dict(type='Blur', p=1.0),
+        dict(type='GaussianBlur', p=1.0),
+        dict(type='MedianBlur', blur_limit=5, p=1.0),
+        dict(type='MotionBlur', p=1.0)
+    ],
+    p=0.1)
 ]
 
 # set normalize value

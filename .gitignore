@@ -13,7 +13,9 @@ baseline_code/saved
 baseline_code/submission/*
 output/*
 !output/CRF.ipynb
-!output/csv_visualize.ipynb
+!output/CSV_visualize.ipynb
+!output/CSV_compare.ipynb
+
 
 # mmsegmentation
 mmsegmentation/*
