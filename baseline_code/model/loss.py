@@ -1,18 +1,33 @@
-from os import O_NDELAY
+"""
+pstage level1 image classification baseline code 참고
+"""
+import os
+import torch
 import torch.nn as nn
-
+import numpy as np
 from segmentation_models_pytorch.losses.soft_ce import SoftCrossEntropyLoss
 from segmentation_models_pytorch.losses.focal import FocalLoss
 from segmentation_models_pytorch.losses.dice import DiceLoss
+from segmentation_models_pytorch.losses.soft_ce import SoftCrossEntropyLoss
+from segmentation_models_pytorch.losses.jaccard import JaccardLoss 
 
 class DiceFocalLoss(nn.Module):
     def __init__(self):
         nn.Module.__init__(self)
-        self.focal_loss = SoftCrossEntropyLoss(mode='multiclass')
+        self.focal_loss = FocalLoss(mode='multiclass')
         self.dice_loss =  DiceLoss(mode='multiclass')
 
     def forward(self, outputs, masks):
         return self.focal_loss(outputs, masks) + self.dice_loss(outputs, masks)
+
+class JaccardSoftCE(nn.Module):
+    def __init__(self):
+        nn.Module.__init__(self)
+        self.jaccard_loss = JaccardLoss(mode='multiclass')
+        self.soft_ce = SoftCrossEntropyLoss(smooth_factor=0.1)
+
+    def forward(self, outputs, masks):
+        return self.jaccard_loss(outputs, masks) + self.soft_ce(outputs, masks)
 
 class DiceLoss_(nn.Module):
     def __init__(self):
@@ -25,17 +40,35 @@ class DiceLoss_(nn.Module):
 class FocalLoss_(nn.Module):
     def __init__(self):
         nn.Module.__init__(self)
-        self.focal_loss = SoftCrossEntropyLoss(mode='multiclass')
+        self.focal_loss = FocalLoss(mode='multiclass')
 
     def forward(self, outputs, masks):
         return self.focal_loss(outputs, masks)
 
+class SoftCrossEntropyLoss_(nn.Module):
+    def __init__(self):
+        nn.Module.__init__(self)
+        self.soft_ce = SoftCrossEntropyLoss(smooth_factor=0.1)
+
+    def forward(self, outputs, masks):
+        return self.soft_ce(outputs, masks)
+
+class JaccardLoss_(nn.Module):
+    def __init__(self):
+        nn.Module.__init__(self)
+        self.jaccard_loss = JaccardLoss(mode='multiclass')
+
+    def forward(self, outputs, masks):
+        return self.jaccard_loss(outputs, masks)
+
 _criterion_entrypoints = {
     'cross_entropy': nn.CrossEntropyLoss,
-    'soft_ce' : SoftCrossEntropyLoss,
+    'soft_ce' : SoftCrossEntropyLoss_,
     'focal' : FocalLoss_,
     'dice' : DiceLoss_,
-    'dice_focal' : DiceFocalLoss
+    'dice_focal' : DiceFocalLoss,
+    'jaccard' : JaccardLoss_,
+    'jaccard_soft_ce' : JaccardSoftCE
 }
 
 
