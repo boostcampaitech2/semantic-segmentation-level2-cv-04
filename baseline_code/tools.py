@@ -12,9 +12,9 @@ from logger.logger import best_logger
 category_names = ['Background', 'General trash', 'Paper', 'Paper pack', 'Metal', 'Glass', 'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing']
 
 def save_model(model, saved_dir, file_name):
-    check_point = {'net': model.state_dict()}
+    check_point = model.state_dict()
     output_path = os.path.join(saved_dir, file_name+'.pt')
-    torch.save(model, output_path)
+    torch.save(check_point, output_path)
 
 def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, scheduler, saved_dir, val_every, file_name, device):
     print(f'Start training..')
@@ -69,6 +69,9 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, sche
                 best_mIoU = mIoU
                 save_model(model, saved_dir, file_name=file_name)
                 best_logger(saved_dir, epoch, num_epochs, best_mIoU, IoU_by_class)
+
+        if (epoch + 1) >= (num_epochs - 5):
+            save_model(model, saved_dir, file_name=file_name + f"{epoch - num_epochs + 6}")
 
                 
 
