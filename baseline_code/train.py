@@ -11,6 +11,7 @@ from tools import train
 from data_set.data_set import CustomDataSet, collate_fn
 from data_set.data_augmentation import get_transform
 from model.loss import create_criterion
+from model.custom_encoder import register_encoder
 from logger.wandb_logger import wandb_init
 from logger.logger import yaml_logger, make_dir
 
@@ -27,6 +28,9 @@ def seed_everything(random_seed):
 def run(args, cfg, device):
     seed_everything(cfg['seed'])
     wandb_init(cfg['exp_name'])
+
+    # custom encoder smp에 등록
+    register_encoder()
 
     # config logging
     cfg['saved_dir'] = make_dir(cfg['saved_dir'], cfg['exp_name'])

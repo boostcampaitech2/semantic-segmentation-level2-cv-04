@@ -13,10 +13,10 @@ def config_logger(args):
         json.dump(vars(args), f, ensure_ascii=False, indent=4)
 
 def yaml_logger(args, cfg):
-    file_name = args.config.split('/')[-1]
+    file_name = f"{cfg['exp_name']}.yaml"
     shutil.copyfile(args.config, os.path.join(cfg['saved_dir'], file_name))
 
 def best_logger(saved_dir, epoch, num_epochs, best_mIoU, IoU_by_class):
-    with open(os.path.join(saved_dir, 'config.txt'), 'a', encoding='utf-8') as f:
+    with open(os.path.join(saved_dir, 'best_log.txt'), 'a', encoding='utf-8') as f:
         f.write(f"Epoch [{epoch+1}/{num_epochs}], Best mIoU :{best_mIoU}\n")
         f.write(f"IoU by class : {IoU_by_class}\n")
