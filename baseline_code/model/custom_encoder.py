@@ -25,7 +25,6 @@ class SwinEncoder(torch.nn.Module, EncoderMixin):
 
         self.model = SwinTransformer(**kwargs)
 
-
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
         outs = self.model(x)
         return list(outs)
@@ -33,11 +32,11 @@ class SwinEncoder(torch.nn.Module, EncoderMixin):
     def load_state_dict(self, state_dict, **kwargs):
         self.model.load_state_dict(state_dict['model'], strict=False, **kwargs)
 
-# smp encoder로 사용할 수 있게 등록
+# Swin을 smp의 encoder로 사용할 수 있게 등록
 def register_encoder():
     smp.encoders.encoders["swin_encoder"] = {
     "encoder": SwinEncoder, # encoder class here
-    "pretrained_settings": {
+    "pretrained_settings": { # pretrained 값 설정
         "imagenet": {
             "mean": [0.485, 0.456, 0.406],
             "std": [0.229, 0.224, 0.225],
@@ -46,7 +45,7 @@ def register_encoder():
             "input_range": [0, 1],
         },
     },
-    "params": {
+    "params": { # 기본 파라미터
         "pretrain_img_size": 384,
         "embed_dim": 128,
         "depths": [2, 2, 18, 2],

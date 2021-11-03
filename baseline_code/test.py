@@ -1,10 +1,7 @@
-
-import os
-import argparse
 import torch
-import pandas as pd
-import numpy as np
+import argparse
 import yaml
+import pandas as pd
 import ttach as tta
 
 from tools import test
@@ -16,7 +13,8 @@ import segmentation_models_pytorch as smp
 
 @torch.no_grad()
 def inference(cfg, device):
-    # custom encoder smp에 등록
+
+    # Custom encoder(Swin) smp에 등록
     register_encoder()
 
     # TTA transform
@@ -27,6 +25,7 @@ def inference(cfg, device):
         tta.Scale(scales=[0.5, 0.75, 1.0, 1.25, 1.5])
     ])
 
+    # Test Data 설정
     dataset_path  = '../input/data'
     test_path = '../input/data/test.json'
     test_transform = get_transform('test_transform')
@@ -37,17 +36,17 @@ def inference(cfg, device):
                                           num_workers=4,
                                           collate_fn=collate_fn)
 
+    # 모델 경로
     model_path =  f"{cfg['saved_dir']}/{cfg['exp_name']}/{cfg['exp_name']}.pt"                                    
     
     # model 불러오기
     model = smp.__dict__[cfg['model']['name']]
     model = model(**cfg['model']['params'])
+
     # best model 불러오기
     checkpoint = torch.load(model_path, map_location=device)
     model.load_state_dict(checkpoint)
-
     model = model.to(device)
-    # 추론을 실행하기 전에는 반드시 설정 (batch normalization, dropout 를 평가 모드로 설정)
     model.eval()
 
     tta_model = tta.SegmentationTTAWrapper(model, tta_transforms, merge_mode='mean')
@@ -74,8 +73,8 @@ if __name__ == '__main__':
     parser.add_argument('--exp', type=str, default='3_Crop_Test')
     args = parser.parse_args()
 
+    # exp 이름으로 saved 폴더의 저장된 실험 정보 불러오기
     yaml_path = f"./saved/{args.exp}/{args.exp}.yaml"
-
     with open(yaml_path) as f:
         cfg = yaml.safe_load(f)
 

@@ -1,15 +1,17 @@
 import wandb
 
+# wandb init
 def wandb_init(exp_name):
-    wandb.init(project="project-name", reinit=True)
+    wandb.init(project="segmentation", entity = "cv4", reinit=True)
     wandb.run.name = exp_name
 
+# wandb lr 기록
 def lr_logger(lr):
     wandb.log({
         "learning rate" : lr
     })
 
-
+# wandb train 값 기록
 def train_logger(loss, mIoU, acc):
     wandb.log({
         "train/loss" : loss.item(),
@@ -17,6 +19,7 @@ def train_logger(loss, mIoU, acc):
         "train/acc" : acc.item()
     })
 
+# wandb valid 값 기록
 def valid_logger(mean_acc, acc, acc_cls, mIoU, IoU):
     wandb.log({
         "val/mIoU" : mIoU.item(),

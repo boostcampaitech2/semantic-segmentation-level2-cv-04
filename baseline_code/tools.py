@@ -4,18 +4,19 @@ import numpy as np
 import albumentations as A
 from tqdm import tqdm
 from utils import add_hist, label_accuracy_score
-from model.loss import create_criterion
 from torch.cuda.amp import GradScaler, autocast
 from logger.wandb_logger import train_logger, valid_logger, lr_logger
 from logger.logger import best_logger
 
 category_names = ['Background', 'General trash', 'Paper', 'Paper pack', 'Metal', 'Glass', 'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing']
 
+# 모델 저장
 def save_model(model, saved_dir, file_name):
     check_point = model.state_dict()
     output_path = os.path.join(saved_dir, file_name+'.pt')
     torch.save(check_point, output_path)
 
+# train
 def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, scheduler, saved_dir, val_every, file_name, device):
     print(f'Start training..')
     n_class = 11
@@ -36,15 +37,14 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, sche
             # device 할당
             model = model.to(device)
             
-            with autocast(True):
-                # inference
+            with autocast(True): # mixed-precision
                 outputs = model(images)
-                
-                # loss 계산 (cross entropy loss)
                 loss = criterion(outputs, masks)
+
             scaler.scale(loss).backward()
             scaler.step(optimizer)
             scaler.update()
+
             optimizer.zero_grad()
             
             outputs = torch.argmax(outputs, dim=1).detach().cpu().numpy()
@@ -52,30 +52,36 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, sche
             
             hist = add_hist(hist, masks, outputs, n_class=n_class)
             mean_acc, acc, acc_cls, mIoU, fwavacc, IoU = label_accuracy_score(hist)
+
+            # wandb logging
             train_logger(loss, mIoU, acc)
+
             # step 주기에 따른 loss 출력
             if (step + 1) % 25 == 0:
                 print(f'Epoch [{epoch+1}/{num_epochs}], Step [{step+1}/{len(data_loader)}], \
                         Loss: {round(loss.item(),4)}, mIoU: {round(mIoU,4)}')
+
+        # wandb lr logging
         lr_logger(optimizer.param_groups[0]['lr'])
+
         scheduler.step()
 
         # validation 주기에 따른 loss 출력 및 best model 저장
         if (epoch + 1) % val_every == 0:
             mIoU, IoU_by_class = validation(epoch + 1, model, val_loader, criterion, device)
-            if best_mIoU < mIoU:
+            if best_mIoU < mIoU: # mIoU를 기준으로 best model 저장
                 print(f"Best performance at epoch: {epoch + 1}")
                 print(f"Save model in {saved_dir}")
                 best_mIoU = mIoU
                 save_model(model, saved_dir, file_name=file_name)
                 best_logger(saved_dir, epoch, num_epochs, best_mIoU, IoU_by_class)
 
+        # 마지막 5개 weight 저장
         if (epoch + 1) >= (num_epochs - 5):
-            save_model(model, saved_dir, file_name=file_name + f"{epoch - num_epochs + 6}")
+            save_model(model, saved_dir, file_name=file_name + f"{epoch + 1}")
 
                 
-
-
+# validate
 def validation(epoch, model, data_loader, criterion, device):
     print(f'Start validation #{epoch}')
     model.eval()
@@ -109,14 +115,18 @@ def validation(epoch, model, data_loader, criterion, device):
         mean_acc, acc, acc_cls, mIoU, fwavacc, IoU = label_accuracy_score(hist)
         IoU_by_class = [{classes : round(IoU,4)} for IoU, classes in zip(IoU , category_names)]
         
+        # wandb logging
         valid_logger(mean_acc, acc, acc_cls, mIoU, IoU)
+
+        # console에 출력
         avrg_loss = total_loss / cnt
         print(f'Validation #{epoch}  Average Loss: {round(avrg_loss.item(), 4)}, Accuracy : {round(acc, 4)}, \
                 mIoU: {round(mIoU, 4)}')
         print(f'IoU by class : {IoU_by_class}')
         
     return mIoU, IoU_by_class
-    
+
+# test
 def test(model, data_loader, device):
     size = 256
     transform = A.Compose([A.Resize(size, size)])
