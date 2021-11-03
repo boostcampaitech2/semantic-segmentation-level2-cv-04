@@ -10,7 +10,7 @@ log_config = dict(
             init_kwargs=dict(
                 project='segmentation',
                 entity='cv4',
-                name='zzin'
+                name='8_ocrnet_hr48_512x_40k_voc12'
             ))
     ])
 # yapf:enable

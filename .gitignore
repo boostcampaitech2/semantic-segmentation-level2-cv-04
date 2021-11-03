@@ -7,6 +7,7 @@ input/data/*
 input/mmseg
 !input/data/image_reroute.py
 !input/data/json-filename_edit.py
+!input/data/EDA.ipynb
 
 # output
 baseline_code/saved
@@ -24,3 +25,26 @@ mmsegmentation/configs/*
 !mmsegmentation/pretrain
 mmsegmentation/pretrain/*
 !mmsegmentation/pretrain/README.md
+
+# R-CNN mmdetection
+R-CNN_mmdet/*
+!R-CNN_mmdet/Draw.ipynb
+!R-CNN_mmdet/inference.ipynb
+!R-CNN_mmdet/configs
+R-CNN_mmdet/configs/*
+!R-CNN_mmdet/configs/datasets
+!R-CNN_mmdet/configs/finals
+!R-CNN_mmdet/configs/schedules
+!R-CNN_mmdet/configs/default_runtime.py
+
+# smp
+smp_dev_jo/*
+!smp_dev_jo/dataset
+!smp_dev_jo/utils
+!smp_dev_jo/train.py
+!smp_dev_jo/train.sh
+!smp_dev_jo/inference.py
+!smp_dev_jo/class_dict.csv
+!smp_dev_jo/requirements.txt
+!smp_dev_jo/custom
+smp_dev_jo/hubmap_1st_solution_add_arg/pretrained-models.pytorch
