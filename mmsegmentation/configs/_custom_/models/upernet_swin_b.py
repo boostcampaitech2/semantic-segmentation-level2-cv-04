@@ -1,5 +1,5 @@
 _base_ = [
-    '../datasets/dataset_augment.py',
+    '../datasets/dataset_alldata.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
