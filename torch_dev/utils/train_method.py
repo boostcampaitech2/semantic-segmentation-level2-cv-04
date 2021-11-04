@@ -29,7 +29,7 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             model = model.to(device)
             
             optimizer.zero_grad()
-            
+
             with autocast(True):
                 outputs = model(images)
                 loss = criterion(outputs, masks)
@@ -38,9 +38,10 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             scaler.step(optimizer)
             scaler.update()
 
-            scheduler.step()
-            
+            if isinstance(outputs,tuple):
+                outputs = outputs[0]    
             outputs = torch.argmax(outputs, dim=1).detach().cpu().numpy()
+            
             masks = masks.detach().cpu().numpy()
             
             hist = add_hist(hist, masks, outputs, n_class=n_class)
@@ -59,8 +60,8 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             TQDM.setMainPbarDescInSaved(mainPbar,epoch,mIoU)
             saveHelper.removeModel()
             saveHelper.saveModel(epoch,model,optimizer,scheduler)
-            
-    # saveHelper.renameBestModel() #생각해보니 best일때만 저장되니까 젤높은숫자가 best임
+    
+        scheduler.step() 
 
 def validation(epoch, model, valid_loader, criterion, device, doWandb):
     model.eval()
@@ -91,6 +92,10 @@ def validation(epoch, model, valid_loader, criterion, device, doWandb):
             
             outputs = model(images)
             loss = criterion(outputs, masks)
+            
+
+            if isinstance(outputs,tuple):
+                outputs = outputs[0]    
             
             outputs = torch.argmax(outputs, dim=1).detach().cpu().numpy()
             masks = masks.detach().cpu().numpy()

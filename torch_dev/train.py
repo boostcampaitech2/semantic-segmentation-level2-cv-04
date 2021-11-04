@@ -13,7 +13,6 @@ def getArgument():
 	parser.add_argument('--dir',type=str ,required=True)
 	return parser.parse_known_args()[0].dir
 
-
 def main(custom_dir):
 
 	arg = getattr(import_module(f"custom.{custom_dir}.settings.arg"), "getArg")()
@@ -23,8 +22,8 @@ def main(custom_dir):
 
 	train_transform, val_transform = getattr(import_module(f"custom.{custom_dir}.settings.transform"), "getTransform")()
 
-	train_dataset = CustomDataset(data_dir=addPath([arg.image_root,arg.train_json]),image_root=arg.image_root, mode='train', transform=train_transform)
-	val_dataset = CustomDataset(data_dir=addPath([arg.image_root,arg.val_json]),image_root=arg.image_root, mode='val', transform=val_transform)
+	train_dataset = CustomDataset(data_dir=os.path.join(arg.image_root,arg.train_json),image_root=arg.image_root, mode='train', transform=train_transform)
+	val_dataset = CustomDataset(data_dir=os.path.join(arg.image_root,arg.val_json),image_root=arg.image_root, mode='val', transform=val_transform)
 
 	trainLoader, valLoader = getattr(import_module(f"custom.{custom_dir}.settings.dataloader"), "getDataloader")(
 		train_dataset, val_dataset, arg.batch, arg.train_worker, arg.valid_worker)
@@ -35,7 +34,7 @@ def main(custom_dir):
 	optimizer, scheduler = getattr(import_module(f"custom.{custom_dir}.settings.opt_scheduler"), "getOptAndScheduler")(model, arg.lr)
 
 	outputPath = os.path.join(arg.output_path, arg.custom_name)
-	# os.makedirs(outputPath, exist_ok=False)
+
 	shutil.copytree(f"custom/{custom_dir}",outputPath)
 	os.makedirs(outputPath+"/models")
 	
@@ -45,9 +44,6 @@ def main(custom_dir):
 			WandBMethod.login(arg, model, criterion)
 
 	train(arg.epoch, model, trainLoader, valLoader, criterion, optimizer,scheduler, outputPath, arg.save_capacity, device, arg.wandb)
-
-def addPath(pathList):
-	return os.path.join(*pathList)
 
 if __name__=="__main__":
 	custom_dir = getArgument()

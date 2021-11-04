@@ -3,10 +3,10 @@ from easydict import EasyDict as eDict
 def getArg():
 	arg = eDict()
 
-	arg.batch = 16
-	arg.epoch = 20
+	arg.batch = 12
+	arg.epoch = 40
 	arg.lr = 1e-4
-	arg.seed = 21
+	arg.seed = 42
 	arg.save_capacity = 5
 	
 	arg.image_root = "../input/data"
@@ -23,7 +23,7 @@ def getArg():
 	arg.wandb_project = "segmentation"
 	arg.wandb_entity = "cv4"
 
-	arg.custom_name = "test"
+	arg.custom_name = "swin"
 	
 	arg.TTA = True
 	arg.test_batch = 4
