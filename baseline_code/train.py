@@ -7,7 +7,7 @@ import yaml
 from importlib import import_module
 import segmentation_models_pytorch as smp
 
-from tools import train
+from tool.tools import train
 from data_set.data_set import CustomDataSet, collate_fn
 from data_set.data_augmentation import get_transform
 from model.loss import create_criterion

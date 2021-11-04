@@ -1,10 +1,11 @@
+import os
 import torch
 import argparse
 import yaml
 import pandas as pd
 import ttach as tta
 
-from tools import test
+from tool.tools import test
 from data_set.data_augmentation import get_transform
 from data_set.data_set import CustomDataSet, collate_fn
 from model.custom_encoder import register_encoder
@@ -13,6 +14,8 @@ import segmentation_models_pytorch as smp
 
 @torch.no_grad()
 def inference(cfg, device):
+    # submission 폴더 없을 시 생성
+    os.makedirs('./submission', exist_ok=True)
 
     # Custom encoder(Swin) smp에 등록
     register_encoder()
@@ -50,8 +53,9 @@ def inference(cfg, device):
     model.eval()
 
     tta_model = tta.SegmentationTTAWrapper(model, tta_transforms, merge_mode='mean')
-    # sample_submisson.csv 열기
-    submission = pd.read_csv('./submission/sample_submission.csv', index_col=None)
+
+    # submission columns 설정
+    submission = pd.DataFrame(data=None, index=None, columns=['image_id', 'PredictionString'])
 
     # test set에 대한 prediction
     file_names, preds = test(tta_model, test_loader, device)
@@ -70,7 +74,7 @@ def inference(cfg, device):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--exp', type=str, default='3_Crop_Test')
+    parser.add_argument('--exp', type=str, default='0_Base_Test')
     args = parser.parse_args()
 
     # exp 이름으로 saved 폴더의 저장된 실험 정보 불러오기
