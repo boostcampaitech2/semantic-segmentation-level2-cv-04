@@ -16,6 +16,8 @@ torch_dev/wandb/*
 !torch_dev/custom/sample
 !torch_dev/custom/sample/settings
 !torch_dev/custom/sample/submission/*
+!torch_dev/custom/swin/*
+!torch_dev/custom/panet/*
 torch_dev/custom/*
 
 #temp
