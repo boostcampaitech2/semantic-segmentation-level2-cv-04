@@ -9,14 +9,14 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-import framework.models as models
+from framework.models import seg_model
 from framework.dataset import create_dataloader
 from utils.utils import seed_everything
 
 import albumentations as A
 
 
-def inference(model, test_loader, device):
+def inference(model, test_loader, device, is_aux):
     size = 256
     transform = A.Compose([A.Resize(size, size)])
     print('Start prediction.')
@@ -30,7 +30,10 @@ def inference(model, test_loader, device):
         for step, (imgs, image_infos) in enumerate(tqdm(test_loader)):
 
             # inference (512 x 512)
-            outs = model(torch.stack(imgs).to(device))['out']
+            if is_aux:
+                outs, labels = model(torch.stack(imgs).to(device))
+            else:
+                outs = model(torch.stack(imgs).to(device))
             oms = torch.argmax(outs.squeeze(), dim=1).detach().cpu().numpy()
 
             # resize (256 x 256)
@@ -54,16 +57,15 @@ def inference(model, test_loader, device):
 
 def main(args):
 
-    model = models.fcn_resnet50()
+    model, is_aux = seg_model(args.model)
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    _, _, test_loader = create_dataloader(args.transform, args.batch_size)
+    _, _, test_loader = create_dataloader(args.tta, args.batch_size)
 
     # best model 불러오기
     checkpoint = torch.load(args.model_path, map_location=device)
-    state_dict = checkpoint.state_dict()
-    model.load_state_dict(state_dict)
+    model.load_state_dict(checkpoint)
 
     model = model.to(device)
     # 추론을 실행하기 전에는 반드시 설정 (batch normalization, dropout 를 평가 모드로 설정)
@@ -74,7 +76,7 @@ def main(args):
         './submission/sample_submission.csv', index_col=None)
 
     # test set에 대한 prediction
-    file_names, preds = inference(model, test_loader, device)
+    file_names, preds = inference(model, test_loader, device, is_aux)
 
     # PredictionString 대입
     for file_name, string in zip(file_names, preds):

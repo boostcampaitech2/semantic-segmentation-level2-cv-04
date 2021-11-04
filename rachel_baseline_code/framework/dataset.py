@@ -10,7 +10,7 @@ from pycocotools.coco import COCO
 import numpy as np
 
 from utils.annotation import annotation
-from transform import transform
+from framework.transform import transform
 
 
 def get_classname(classID, cats):
@@ -81,11 +81,11 @@ class CustomDataLoader(Dataset):
         return len(self.coco.getImgIds())
 
 
-def create_dataloader(trans, batch_size):
+def create_dataloader(trans, batch_size, train_path='/train_0.json', valid_path='/valid_0.json'):
     # train.json / validation.json / test.json 디렉토리 설정
     dataset_path = '../input/data'
-    train_path = dataset_path + '/train.json'
-    val_path = dataset_path + '/val.json'
+    train_path = dataset_path + train_path
+    val_path = dataset_path + valid_path
     test_path = dataset_path + '/test.json'
 
     # class (Categories) 에 따른 index 확인 (0~10 : 총 11개)

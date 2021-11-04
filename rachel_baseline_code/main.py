@@ -5,17 +5,18 @@ import yaml
 warnings.filterwarnings('ignore')
 
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torchvision import models
 
 from train import train
-import framework.models as models
+from framework.models import seg_model
 from framework.dataset import create_dataloader
+from framework.criterion import seg_loss
+from framework.optimizer import seg_optimizer
+from framework.scheduler import seg_scheduler
 from utils.annotation import annotation
 from utils.arg_parser import arg_parser
 from utils.logger import make_logger
 from utils.utils import seed_everything
+from utils.wandb import WandBMethod
 
 
 def main(args):
@@ -33,25 +34,20 @@ def main(args):
 
     sorted_df = annotation(dataset_path)
 
-    train_loader, val_loader, _ = create_dataloader(args.transform, args.batch_size)
+    train_loader, val_loader, _ = create_dataloader(args.transform, args.batch_size, args.train_path, args.valid_path)
 
     # model 정의
-    model = models.fcn_resnet50()
+    model, is_aux = seg_model(args.model)
 
     # Loss function 정의
-    criterion = nn.CrossEntropyLoss()
+    criterion = seg_loss(args.loss)
 
     # Optimizer 정의
-    optimizer = optim.Adam(params=model.parameters(),
-                           lr=args.learning_rate, weight_decay=1e-6)
+    optimizer = seg_optimizer(args.opt_name, model, args.learning_rate)
 
     # lr_scheduler 정의
-    if args.scheduler == 'cosine':
-        lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100, eta_min=0.001)
-    elif args.scheduler == 'multiply':
-        def lmbda(epoch): return 0.98739
-        lr_scheduler = optim.lr_scheduler.MultiplicativeLR(optimizer, lr_lambda=lmbda)
-
+    lr_scheduler = seg_scheduler(args, optimizer)
+    
     # 모델 저장 이름 정의
     saved_dir = os.path.join('./saved', args.exp_name)
 
@@ -76,9 +72,12 @@ def main(args):
     with open(f"{saved_dir}/config.yaml", 'w') as file:
         yaml.dump(dict_file, file)
 
+    if args.wandb:
+        WandBMethod.login(args, model, criterion)
+
     # 모델 학습
     train(args.num_epochs, model, train_loader, val_loader, criterion,
-          optimizer, lr_scheduler, saved_dir, file_name, device, sorted_df)
+          optimizer, lr_scheduler, saved_dir, file_name, device, sorted_df, args.wandb, is_aux)
 
 
 if __name__ == '__main__':

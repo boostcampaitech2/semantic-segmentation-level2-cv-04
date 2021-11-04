@@ -11,21 +11,22 @@ def make_logger(path, name=None):
     #3 formatter 지정
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     
-    #4 handler instance 생성
-    console = logging.StreamHandler()
-    filename = os.path.join(path, "performance.log")
-    file_handler = logging.FileHandler(filename=filename)
-    
-    #5 handler 별로 다른 level 설정
-    console.setLevel(logging.INFO)
-    file_handler.setLevel(logging.DEBUG)
+    if not logger.handlers:
+        #4 handler instance 생성
+        console = logging.StreamHandler()
+        filename = os.path.join(path, "performance.log")
+        file_handler = logging.FileHandler(filename=filename)
+        
+        #5 handler 별로 다른 level 설정
+        console.setLevel(logging.INFO)
+        file_handler.setLevel(logging.DEBUG)
 
-    #6 handler 출력 format 지정
-    console.setFormatter(formatter)
-    file_handler.setFormatter(formatter)
+        #6 handler 출력 format 지정
+        console.setFormatter(formatter)
+        file_handler.setFormatter(formatter)
 
-    #7 logger에 handler 추가
-    logger.addHandler(console)
-    logger.addHandler(file_handler)
+        #7 logger에 handler 추가
+        logger.addHandler(console)
+        logger.addHandler(file_handler)
 
     return logger
