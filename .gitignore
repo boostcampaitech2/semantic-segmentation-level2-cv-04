@@ -18,18 +18,15 @@ torch_dev/wandb/*
 !torch_dev/custom/sample/submission/*
 !torch_dev/custom/swin/*
 !torch_dev/custom/panet/*
+!torch_dev/README.md
 torch_dev/custom/*
 
 #temp
 torch_dev/tempSettings/*
 
 # output
+!output/README.md
 output/*
-
-# output
-baseline_code/saved
-baseline_code/submission/*
-output
 
 # mmsegmentation
 mmsegmentation/*
