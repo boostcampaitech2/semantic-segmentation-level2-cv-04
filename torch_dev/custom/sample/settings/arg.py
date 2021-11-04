@@ -24,5 +24,9 @@ def getArg():
 	arg.wandb_entity = "cv4"
 
 	arg.custom_name = "test"
+	
+	arg.TTA = True
+	arg.test_batch = 4
+	arg.csv_size = 256
 
 	return arg
