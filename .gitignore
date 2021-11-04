@@ -18,6 +18,7 @@ torch_dev/wandb/*
 !torch_dev/custom/sample/submission/*
 !torch_dev/custom/swin/*
 !torch_dev/custom/panet/*
+!torch_dev/README.md
 torch_dev/custom/*
 
 #temp
