@@ -1,10 +1,15 @@
+'''
+Setting Base
+'''
 _base_ = [
     '../datasets/dataset.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
 
-# model settings
+'''
+Model Setting
+'''
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 model = dict(
     type='CascadeEncoderDecoder',
@@ -73,6 +78,9 @@ model = dict(
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))
 
+'''
+Epoch, batchsize settings
+'''   
 checkpoint_config = dict(interval=5)
-runner = dict(type='EpochBasedRunner', max_epochs=75)
+runner = dict(type='EpochBasedRunner', max_epochs=50)
 data = dict(samples_per_gpu=12)

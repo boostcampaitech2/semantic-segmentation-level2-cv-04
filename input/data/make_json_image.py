@@ -2,15 +2,19 @@ import os
 import json
 import shutil
 
+
+'''
+Set json_dir
+'''
 DATAROOT = "./"
-TRAINJSON = os.path.join(DATAROOT,"train_0.json")
-VALIDJSON = os.path.join(DATAROOT,"valid_0.json")
-#TESTJSON = os.path.join(DATAROOT,"test.json")
+TRAINJSON = os.path.join(DATAROOT,"train.json")
+VALIDJSON = os.path.join(DATAROOT,"valid.json")
+TESTJSON = os.path.join(DATAROOT,"test.json")
 
 '''
 Redistribution image by train/valid/test 
 
-rename img by img_id
+rename img file name by img_id 
 '''
 def _rename_images(json_dir, image_dir):
 	with open(json_dir, "r", encoding="utf8") as outfile:
@@ -25,7 +29,7 @@ def _rename_images(json_dir, image_dir):
 Wrap func
 '''
 def make(json,path):
-	imagePath = '../mmseg/images/'+path
+	imagePath = '../mmseg/'+path
 
 	os.makedirs(imagePath, exist_ok=True)
 	_rename_images(json,imagePath)
@@ -36,9 +40,9 @@ Main
 '''
 def __main__():
 
-	make(TRAINJSON, 'training')
-	make(VALIDJSON, 'validation')
-	#make(TESTJSON, 'test')
+	make(TRAINJSON, 'images/training')
+	make(VALIDJSON, 'images/validation')
+	make(TESTJSON, 'test')
 
 
 if __name__=='__main__':

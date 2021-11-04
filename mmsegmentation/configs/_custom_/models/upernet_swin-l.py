@@ -1,23 +1,28 @@
+'''
+Setting Base
+'''
 _base_ = [
-    '../datasets/dataset_bright.py',
+    '../datasets/dataset.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
 
-# model settings
+'''
+Model Setting
+'''
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 backbone_norm_cfg = dict(type='LN', requires_grad=True)
 model = dict(
     type='EncoderDecoder',
-    pretrained='pretrain/swin_base_patch4_window12_384_22k.pth',
+    pretrained='pretrain/swin_large_patch4_window12_384_22k.pth',
     backbone=dict(
         type='SwinTransformer',
         pretrain_img_size=384,
-        embed_dims=128,
+        embed_dims=192,
         patch_size=4,
         mlp_ratio=4,
         depths=[2, 2, 18, 2],
-        num_heads=[4, 8, 16, 32],
+        num_heads=[6, 12, 24, 48],
         window_size=12,
         strides=(4, 2, 2, 2),
         out_indices=(0, 1, 2, 3),
@@ -32,7 +37,7 @@ model = dict(
         norm_cfg=backbone_norm_cfg),
     decode_head=dict(
         type='UPerHead',
-        in_channels=[128, 256, 512, 1024],
+        in_channels=[192, 384, 768, 1536],
         in_index=[0, 1, 2, 3],
         pool_scales=(1, 2, 3, 6),
         channels=512,
@@ -44,7 +49,7 @@ model = dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
     auxiliary_head=dict(
         type='FCNHead',
-        in_channels=512,
+        in_channels=768,
         in_index=2,
         channels=256,
         num_convs=1,
@@ -72,7 +77,9 @@ optimizer = dict(
             'norm': dict(decay_mult=0.)
         }))
 
-# epoch, batchsize settings
+'''
+Epoch, batchsize settings
+'''   
 checkpoint_config = dict(interval=5)
 runner = dict(type='EpochBasedRunner', max_epochs=50)
-data = dict(samples_per_gpu=10)
+data = dict(samples_per_gpu=6)

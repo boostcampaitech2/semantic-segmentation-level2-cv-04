@@ -1,10 +1,15 @@
+'''
+Setting Base
+'''
 _base_ = [
-    '../datasets/dataset_augment.py',
+    '../datasets/dataset.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
 
-# model settings
+'''
+Model Setting
+'''
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 model = dict(
     type='EncoderDecoder',
@@ -49,13 +54,9 @@ model = dict(
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))
 
-# epoch, batchsize settings
+'''
+Epoch, batchsize settings
+'''   
 checkpoint_config = dict(interval=5)
 runner = dict(type='EpochBasedRunner', max_epochs=60)
 data = dict(samples_per_gpu=12)
-
-'''
-# fp16 settings
-optimizer_config = dict(type='Fp16OptimizerHook', loss_scale=512.)
-fp16 = dict()
-'''

@@ -4,14 +4,17 @@ log_config = dict(
     interval=50,
     hooks=[
         dict(type='TextLoggerHook', by_epoch=False),
-        # dict(type='TensorboardLoggerHook')
-        # Wandb Logger Hook
+        dict(type='TensorboardLoggerHook'),
+        '''
+        # Wandb Logger 
+        
         dict(type='WandbLoggerHook',
             init_kwargs=dict(
                 project='segmentation',
-                entity='cv4',
-                name='zzin'
+                entity='entity',
+                name='exp_name'
             ))
+        '''
     ])
 # yapf:enable
 custom_hooks = [dict(type='NumClassCheckHook')]
