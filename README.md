@@ -15,8 +15,8 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 
 ## 🏆 LB Score
 
-- Public LB: 0.698 mAP (3등/19팀)
-- Private LB: 0.685 mAP (3등/19팀)
+- Public LB: 0.780 mIoU (6등/20팀)
+- Private LB: 0. mIoU (등/20팀)
 
 </br>
 
@@ -24,7 +24,7 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 
 - 바야흐로 **대량 생산, 대량 소비**의 시대. 우리는 많은 물건이 대량으로 생산되고 소비되는 시대를 삶에 따라 **쓰레기 대란, 매립지 부족**과 같은 사회 문제 발생
 - 버려지는 쓰레기 중 잘 분리배출 된 쓰레기는 자원으로서 가치를 인정받아 재활용되지만, 잘못 분리배출 되면 그대로 폐기물로 분류되어 매립 또는 소각되기 때문에 분리수거는 사회적 환경 부담 문제를 줄일 수 있는 방법
-- Deep Learning을 통해 쓰레기들을 자동으로 분류할 수 있는 모델 개발 
+- Deep Learning을 통해 쓰레기들을 자동으로 추출할 수 있는 모델 개발 
 
 </br>
 
@@ -49,9 +49,7 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
     - Brightness/Contrast, HueSaturation
     - Crop (RandomResizedCrop)
     - Blur (Gaussian, Median, Motion)
-    - Copy and paste augmentation
-        - 데이터의 개수가 많은 Plastic bag과 Paper를 제외한 클래스로 Copy and Paste Augmentation 진행
-        - 성능 향상 없음. Train에서는 없는, annotation이 생성되는 문제 확인. (e.g. 기존의 Plastic bag 안의 쓰레기는 annotation이 없는데, Plastic bag 위에 물체가 복사되는 경우) 물체 크기에 따른 비율 조정 및 위치 조정이 필요함
+    
 - [TTA(Test Time Augmentation)](https://github.com/qubvel/ttach) API 활용
 - Ensemble: Custom soft-voting 및 csv hard-voting 활용
 
