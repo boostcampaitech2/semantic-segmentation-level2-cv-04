@@ -82,4 +82,7 @@ class WandBMethod:
 				imgList.append(nowImage)
 
 			hConcatImgs.append(cv2.hconcat(imgList))
-		return cv2.vconcat(hConcatImgs)
+
+		fullImg = cv2.vconcat(hConcatImgs)
+		resizedImg = cv2.resize(fullImg.astype('float32'), dsize=(512,512), interpolation=cv2.INTER_AREA)
+		return resizedImg
