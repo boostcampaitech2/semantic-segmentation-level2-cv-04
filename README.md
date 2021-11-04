@@ -32,37 +32,43 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 - GPU : Nvidia Tesla V100
 - OS : Linux Ubuntu 18.04
 - Runtime : Python 3.8.5
-- Main Dependency : Yolov5, MMdetection, Detectron2, Pytorch 1.7.1, OpenCV 4.5.1
+- Main Dependency : MMsegmentation, segmentation_models.pytorch, Pytorch 1.7.1, OpenCV 4.5.1
 
 <br>
 
 ## 🔑 Project Summary
 
-- 여러 종류의 쓰레기 사진들을 입력값으로 받아 쓰레기의 종류와 위치를 파악하는 Object Detection
-- 다양한 API([mmdetection](https://github.com/open-mmlab/mmdetection) & [detectron2](https://github.com/facebookresearch/detectron2) & [yolov5](https://github.com/ultralytics/yolov5)) 활용    
+- 여러 종류의 쓰레기 사진들을 입력값으로 받아 쓰레기의 종류와 위치를 파악하는 Semantic Segmentation
+- 다양한 API ([mmsegmentation](https://github.com/open-mmlab/mmsegmentation) & [segmentation_models.pytorch](https://github.com/qubvel/segmentation_models.pytorch) 활용
+- Custom baseline 작성을 통한 모델 학습 및 추론
 - EDA: 주어진 데이터셋을 이해하기 위해 ipynb 파일로 시각화하여 학습데이터의 전체 & 클래스별 구성과 이미지들의 특징들을 파악
 - CV Strategy: 각 클래스의 비율을 고려한 Training Dataset과 Validation Dataset을 8대2 비율로 분리
 - Data Augmentation : Albumentation 라이브러리를 이용
-    - Flip, RandomRotate90 : 가장 효과적인 Augmentation이였으며 이후 TTA에서도 사용되어 높은 성능향상
-    - RandomResizedCrop : Flip과 마찬가지로 여러가지 크기와 잘린 이미지들이 들어올 수 있어서 해당 Augmentation 적용
-    - RandomBrightnessContrast, HueSaturationValue : EDA 결과 여러가지 밝기와 색상의 입력이 들어올 수 있어서 해당 Augmentation을 적용
-    - GaussNoise, Blur : 초점이 어긋난 사진이 있어 해당 Augmentation 적용
-- [TTA(Test Time Augmentation)](https://inspaceai.github.io/2019/12/20/Test_Time_Augmentation_Review/) 적용
-- Ensemble: [Weighted-Boxes-Fusion](https://github.com/ZFTurbo/Weighted-Boxes-Fusion) WBF, IoU=0.6 으로 모델 앙상블 
+    - CLAHE
+    - Flip, Rotate(90, 30)
+    - Brightness/Contrast, HueSaturation
+    - Crop (RandomResizedCrop)
+    - Blur (Gaussian, Median, Motion)
+    - Copy and paste augmentation
+        데이터의 개수가 많은 Plastic bag과 Paper를 제외한 클래스로 Copy and Paste Augmentation 진행
+        성능 향상 없음. Train에서는 없는, annotation이 생성되는 문제 확인. (e.g. 기존의 Plastic bag 안의 쓰레기는 annotation이 없는데, Plastic bag 위에 물체가 복사되는 경우) 물체 크기에 따른 비율 조정 및 위치 조정이 필요함
+- [TTA(Test Time Augmentation)](https://github.com/qubvel/ttach) API 활용
+- Ensemble: Custom soft-voting 및 csv hard-voting 활용
 
 ### Dataset
 
-- 전체 이미지 개수 : 9754장
-- 10 class : General trash, Paper, Paper pack, Metal, Glass, Plastic, Styrofoam, Plastic bag, Battery, Clothing
-- 이미지 크기 : (1024, 1024)
-- 학습데이터는 4883장, 평가데이터는 4871장으로 무작위 선정
+- 전체 이미지 개수 : 4091장
+- 11 class : Background, General trash, Paper, Paper pack, Metal, Glass, Plastic, Styrofoam, Plastic bag, Battery, Clothing
+- 이미지 크기 : (512, 512)
+- 원활한 대회 운영 위해 output을 일괄적으로 256 x 256 으로 변경하여 score를 반영
+- 학습데이터는 3272장, 평가데이터는 819장으로 무작위 선정
     - 평가데이터: Public 50%, Private 50%
 
 ### Metrics
 
-- mAP50 (Mean Average Precision)
-    - Object Detection에서 사용하는 대표적인 성능 측정 방법
-    - Ground Truth 박스와 Prediction 박스간 IoU(Intersection Over Union, Detector의 정확도를 평가하는 지표)가 50이 넘는 예측에 대해 True라고 판단
+- mIoU (Mean Intersection over Union)
+    - Semantic Segmentation에서 사용하는 대표적인 성능 측정 방법
+    - 각 클래스 별 Ground Truth와 Prediction 간 IoU 값들에 대한 평균값
 
 </br>
 
