@@ -40,6 +40,3 @@ mmsegmentation/configs/*
 !mmsegmentation/pretrain
 mmsegmentation/pretrain/*
 !mmsegmentation/pretrain/README.md
-
-# baseline_code
-baseline_code___/*
