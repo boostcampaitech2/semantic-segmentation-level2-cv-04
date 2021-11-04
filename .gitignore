@@ -25,12 +25,8 @@ torch_dev/custom/*
 torch_dev/tempSettings/*
 
 # output
+!output/README.md
 output/*
-
-# output
-baseline_code/saved
-baseline_code/submission/*
-output
 
 # mmsegmentation
 mmsegmentation/*
