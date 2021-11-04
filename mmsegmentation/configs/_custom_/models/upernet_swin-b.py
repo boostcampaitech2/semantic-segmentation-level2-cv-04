@@ -1,10 +1,15 @@
+'''
+Setting Base
+'''
 _base_ = [
     '../datasets/dataset.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
 
-# model settings
+'''
+Model Setting
+'''
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 backbone_norm_cfg = dict(type='LN', requires_grad=True)
 model = dict(
@@ -64,7 +69,7 @@ optimizer = dict(
     type='AdamW',
     lr=0.00006,
     betas=(0.9, 0.999),
-    weight_decay=0.01,
+    weight_decay=0.0001,
     paramwise_cfg=dict(
         custom_keys={
             'absolute_pos_embed': dict(decay_mult=0.),
@@ -72,5 +77,9 @@ optimizer = dict(
             'norm': dict(decay_mult=0.)
         }))
 
+'''
+Epoch, batchsize settings
+'''   
+checkpoint_config = dict(interval=5)
 runner = dict(type='EpochBasedRunner', max_epochs=50)
 data = dict(samples_per_gpu=10)

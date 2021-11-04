@@ -1,10 +1,15 @@
+'''
+Setting Base
+'''
 _base_ = [
     '../datasets/dataset.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
 
-# model settings
+'''
+Model Setting
+'''
 norm_cfg = dict(type='SyncBN', requires_grad=True)
 model = dict(
     type='EncoderDecoder',
@@ -21,13 +26,11 @@ model = dict(
         style='pytorch',
         contract_dilation=True),
     decode_head=dict(
-        type='DepthwiseSeparableASPPHead',
+        type='DAHead',
         in_channels=2048,
         in_index=3,
         channels=512,
-        dilations=(1, 12, 24, 36),
-        c1_in_channels=256,
-        c1_channels=48,
+        pam_channels=64,
         dropout_ratio=0.1,
         num_classes=11,
         norm_cfg=norm_cfg,
@@ -51,5 +54,9 @@ model = dict(
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))
 
-runner = dict(type='EpochBasedRunner', max_epochs=50)
-data = dict(samples_per_gpu=10)
+'''
+Epoch, batchsize settings
+'''   
+checkpoint_config = dict(interval=5)
+runner = dict(type='EpochBasedRunner', max_epochs=60)
+data = dict(samples_per_gpu=12)
