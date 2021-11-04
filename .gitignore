@@ -5,6 +5,12 @@
 ._**
 .DS_**
 
+# baseline_code
+baseline_code/saved
+baseline_code/submission
+
+# custom
+
 # dataset
 input/data/*
 input/mmseg
@@ -16,18 +22,3 @@ baseline_code/saved
 baseline_code/submission/*
 output
 
-# mmsegmentation
-mmsegmentation/*
-!mmsegmentation/README.md
-!mmsegmentation/configs
-mmsegmentation/configs/*
-!mmsegmentation/configs/_custom_
-!mmsegmentation/train.sh
-!mmsegmentation/visualize.sh
-!mmsegmentation/inference.ipynb
-!mmsegmentation/pretrain
-mmsegmentation/pretrain/*
-!mmsegmentation/pretrain/README.md
-
-# baseline_code
-baseline_code___/*
