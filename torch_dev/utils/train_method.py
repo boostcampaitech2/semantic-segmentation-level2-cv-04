@@ -29,7 +29,7 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             model = model.to(device)
             
             optimizer.zero_grad()
-            
+
             with autocast(True):
                 outputs = model(images)
                 loss = criterion(outputs, masks)
@@ -40,7 +40,10 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
 
             scheduler.step()
             
+            if isinstance(outputs,tuple):
+                outputs = outputs[0]    
             outputs = torch.argmax(outputs, dim=1).detach().cpu().numpy()
+            
             masks = masks.detach().cpu().numpy()
             
             hist = add_hist(hist, masks, outputs, n_class=n_class)
@@ -91,6 +94,10 @@ def validation(epoch, model, valid_loader, criterion, device, doWandb):
             
             outputs = model(images)
             loss = criterion(outputs, masks)
+            
+
+            if isinstance(outputs,tuple):
+                outputs = outputs[0]    
             
             outputs = torch.argmax(outputs, dim=1).detach().cpu().numpy()
             masks = masks.detach().cpu().numpy()
