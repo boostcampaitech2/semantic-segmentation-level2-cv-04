@@ -50,8 +50,8 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
     - Crop (RandomResizedCrop)
     - Blur (Gaussian, Median, Motion)
     - Copy and paste augmentation
-        데이터의 개수가 많은 Plastic bag과 Paper를 제외한 클래스로 Copy and Paste Augmentation 진행
-        성능 향상 없음. Train에서는 없는, annotation이 생성되는 문제 확인. (e.g. 기존의 Plastic bag 안의 쓰레기는 annotation이 없는데, Plastic bag 위에 물체가 복사되는 경우) 물체 크기에 따른 비율 조정 및 위치 조정이 필요함
+        - 데이터의 개수가 많은 Plastic bag과 Paper를 제외한 클래스로 Copy and Paste Augmentation 진행
+        - 성능 향상 없음. Train에서는 없는, annotation이 생성되는 문제 확인. (e.g. 기존의 Plastic bag 안의 쓰레기는 annotation이 없는데, Plastic bag 위에 물체가 복사되는 경우) 물체 크기에 따른 비율 조정 및 위치 조정이 필요함
 - [TTA(Test Time Augmentation)](https://github.com/qubvel/ttach) API 활용
 - Ensemble: Custom soft-voting 및 csv hard-voting 활용
 
