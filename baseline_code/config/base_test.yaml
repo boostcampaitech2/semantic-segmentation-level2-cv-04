@@ -1,21 +1,22 @@
 seed: 42 # seed
 saved_dir: ./saved # save directory
-exp_name: 0_Base_Test # experiment name
+exp_name: 0_Base_Test # experiment name /saved/exp_name/ 폴더에 모델과 best_log, yaml 파일이 저장됨
 val_every: 1 # validation step
 
-model:
-  name: DeepLabV3Plus
-  params:
-    encoder_name: tu-xception65
+model: # SMP(segmentation models pytorch)
+  name: DeepLabV3Plus # Segmentation models
+  params: # parameters
+    encoder_name: tu-xception65 # encoder
     encoder_weights: imagenet
     in_channels: 3
     classes: 11
   
 # data
-dataset_path: '../input/data'
-train_path: ../input/data/split/train_0.json
-val_path: ../input/data/split/valid_0.json
+dataset_path: '../input/data' # 데이터 경로
+train_path: ../input/data/split/train_0.json # train에 사용할 json 파일
+val_path: ../input/data/split/valid_0.json # validation에 사용할 json 파일
 
+# dataloader
 train_dataloader:
   params:
     batch_size: 16
@@ -29,23 +30,24 @@ valid_dataloader:
     shuffle: true
     num_workers: 4
 
+# 사용할 transforms 이름
 transforms:
-  name: train_transform
+  name: train_transform # /data_set/data_augmentation.py의 transform_entrypoints 참고
 
 # train setting
-epochs: 40
+epochs: 40 # train epochs
 
-criterion: 
-  name: cross_entropy
+criterion: # loss function
+  name: cross_entropy # /model/loss.py의 criterion_entrypoints 참고
 
-optimizer:
-  name: AdamW
+optimizer: # optimizer 
+  name: AdamW # torch.optim의 optimizer 사용 가능
   params:
     lr: 0.0001 # 1e4
     weight_decay: 0.00001 # 1e5
 
-scheduler:
-  name: OneCycleLR
+scheduler: # lr scheduler
+  name: OneCycleLR # torch.optim.lr_scheduler scheduler 사용 가능
   params:
     max_lr: 0.0001 # 1e4
     pct_start: 0.05
