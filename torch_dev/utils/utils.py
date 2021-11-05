@@ -1,5 +1,10 @@
 # # https://github.com/wkentaro/pytorch-fcn/blob/master/torchfcn/utils.py
 
+'''
+이쪽은 퍼온거라... 잘 몰라요... 
+'''
+
+
 import numpy as np
 
 def _fast_hist(label_true, label_pred, n_class):
