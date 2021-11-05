@@ -38,6 +38,7 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             scaler.step(optimizer)
             scaler.update()
 
+            # auxiliary head가 포함됐을 때 mask만 추출
             if isinstance(outputs,tuple):
                 outputs = outputs[0]    
             outputs = torch.argmax(outputs, dim=1).detach().cpu().numpy()
@@ -47,7 +48,6 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
             hist = add_hist(hist, masks, outputs, n_class=n_class)
             acc, acc_cls, acc_clsmean, mIoU, fwavacc, IoU = label_accuracy_score(hist)
 
-            # pbar.update()
             TQDM.setPbarPostInStep(pbar, acc,acc_clsmean,loss,mIoU)
 
             if doWandb:
@@ -56,11 +56,12 @@ def train(num_epochs, model, train_loader, val_loader, criterion, optimizer, sch
         avrg_loss ,mIoU = validation(epoch, model, val_loader, criterion, device, doWandb)
         TQDM.setMainPbarPostInValid(mainPbar,avrg_loss)
 
-        if saveHelper.checkBestLoss(mIoU, epoch):
+        if saveHelper.checkBestIoU(mIoU, epoch):
             TQDM.setMainPbarDescInSaved(mainPbar,epoch,mIoU)
             saveHelper.removeModel()
             saveHelper.saveModel(epoch,model,optimizer,scheduler)
-    
+
+        # Scheduler는 epoch당 step
         scheduler.step() 
 
 def validation(epoch, model, valid_loader, criterion, device, doWandb):
@@ -87,13 +88,12 @@ def validation(epoch, model, valid_loader, criterion, device, doWandb):
 
             images, masks = images.to(device), masks.to(device)            
             
-            # device 할당
             model = model.to(device)
             
             outputs = model(images)
             loss = criterion(outputs, masks)
             
-
+            # auxiliary head가 포함됐을 때 mask만 추출
             if isinstance(outputs,tuple):
                 outputs = outputs[0]    
             
@@ -110,6 +110,7 @@ def validation(epoch, model, valid_loader, criterion, device, doWandb):
 
             TQDM.setPbarPostInStep(pbar,acc,acc_clsmean,loss,total_mIoU/cnt)
 
+            # 여러개의 epoch 중 랜덤으로 뽑아 wandb에 전송하는 용도
             if step==targetStep:
                 targetImages, targetOutputs, targetMasks = images.detach().cpu().numpy(), outputs, masks
 
