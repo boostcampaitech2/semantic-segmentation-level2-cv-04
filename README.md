@@ -81,7 +81,7 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 
 ### Working Directory
 ```
-├──dataset
+├──input
 |   ├──eda
 |   ├──yolov5       # dataset by yolo format
 |   └──json files   # dataset by coco format
@@ -89,11 +89,8 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 |   ├──detectron
 |   ├──mmdet
 |   └──yolov5
-├──detectron
-├──mmdetection
-├──Swin-Transformer-Object-Detection # swin-b
-├──efficientdet
-└──yolov5
+├──mmsegmentation
+└──torch_dev
 ```
 
 각 폴더 별 자세한 사용 설명은 폴더 내 README.md 참고
