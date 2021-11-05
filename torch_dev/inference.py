@@ -36,6 +36,7 @@ def main(custom_dir, model_name):
 	model.load_state_dict(stateDict['model'])
 
 	if arg.TTA:
+		# tta 유무에 따라 모델 포장
 		model = tta.SegmentationTTAWrapper(model, ttaTransfrom)
 
 	file_names, preds_array = test(model, dataloader, device, arg.csv_size)
