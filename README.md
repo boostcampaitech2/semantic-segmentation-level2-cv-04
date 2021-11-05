@@ -39,7 +39,7 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 ## 🔑 Project Summary
 
 - 여러 종류의 쓰레기 사진들을 입력값으로 받아 쓰레기의 종류와 위치를 파악하는 Semantic Segmentation
-- 다양한 API ([mmsegmentation](https://github.com/open-mmlab/mmsegmentation) & [segmentation_models.pytorch](https://github.com/qubvel/segmentation_models.pytorch) 활용
+- 다양한 API ([mmsegmentation](https://github.com/open-mmlab/mmsegmentation) & [segmentation_models.pytorch](https://github.com/qubvel/segmentation_models.pytorch)) 활용
 - Custom baseline 작성을 통한 모델 학습 및 추론
 - EDA: 주어진 데이터셋을 이해하기 위해 ipynb 파일로 시각화하여 학습데이터의 전체 & 클래스별 구성과 이미지들의 특징들을 파악
 - CV Strategy: 각 클래스의 비율을 고려한 Training Dataset과 Validation Dataset을 8대2 비율로 분리
