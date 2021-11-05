@@ -36,4 +36,4 @@ $ pip install -r requirements.txt
 
 |Model|Backbone|LB score|Config|
 |---|:---:|:---:|:---:|
-|PANet|Swin-B|0.741|[Config](https://github.com/boostcampaitech2/semantic-segmentation-level2-cv-04/blob/dev_yy/baseline_code/config/pan_swin.yaml)|
+|PANet|Swin-B|0.752|[Config](https://github.com/boostcampaitech2/semantic-segmentation-level2-cv-04/blob/dev_yy/baseline_code/config/pan_swin.yaml)|
