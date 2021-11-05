@@ -1,6 +1,9 @@
 from tqdm import tqdm
 
 class TQDM:
+	'''
+	TQDM용 static method들을 모아놓은 Helper 클래스입니다.
+	'''
 
 	@classmethod
 	def _makeProcessBar(cls,iterable,desc):
@@ -8,10 +11,16 @@ class TQDM:
 
 	@classmethod
 	def makeMainProcessBar(cls, epoch):
+		'''
+		epoch당 update되는 pbar
+		'''
 		return cls._makeProcessBar(range(epoch),desc="Start Training")
 	
 	@classmethod
 	def makePbar(cls, loader ,epoch, isTrain):
+		'''
+		batch 마다 update되는 pbar
+		'''
 		if isTrain:
 			desc = f"Train #{epoch} "
 		else:
