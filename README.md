@@ -73,13 +73,11 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 ## 💁‍♀️ Composition
 
 ### Used Model
-|Model|Neck|Head|Backbone|model_dir
-|---|:---:|:---:|:---:|---|
-|Swin|PA-FPN|Cascade-RCNN|Swin|/mmdetection|
-|Swin-S|FPN|Cascade-RCNN|Swin|/mmdetection|
-|Swin-B|FPN|Cascade-RCNN|Swin|/Swin-Transformer-Object-Detection|
-|EfficientDet|-|-|Efficientnet|/efficientdet|
-|YOLOv5x6|-|-|YOLOv5|/yolov5|
+|Model|Backbone|model_dir
+|---|:---:|---|
+|UperNet|SwinL||/mmdetection|
+|PAN|SwinB||/Baseline|
+|UperNet|ViT||/mmdetection|
 
 ### Working Directory
 ```
