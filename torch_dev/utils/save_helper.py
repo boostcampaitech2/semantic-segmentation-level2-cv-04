@@ -3,6 +3,11 @@ import os
 import torch
 
 class SaveHelper:
+	'''
+	모든 모델을 저장할 때는 용량 부담이 크기때문에 저장되는 모델의 수를 설정하는 클래스입니다
+	deque 형태로 이름을 가지고있고, 새로운 최고값이 들어왔을 때 큐가 꽉찼다면 가장 낮은 점수를 가진 모델을 제거합니다
+	'''
+
 	def __init__(self, capacity, saved_dir) -> None:
 		self.savedList = deque()
 		self.capacity = max(capacity,2)
@@ -14,7 +19,7 @@ class SaveHelper:
 	def _fileFormat(epoch):
 		return f"epoch{epoch}.pth"
 
-	def checkBestLoss(self, avrg_iou, epoch):
+	def checkBestIoU(self, avrg_iou, epoch):
 		
 		ok = avrg_iou.item() > self.bestIoU
 
@@ -50,5 +55,3 @@ class SaveHelper:
 
 		torch.save(saveDict, self._concatSaveDirByEpoch(epoch))
   
-	def renameBestModel(self):
-		os.rename(self._concatSaveDirByEpoch(self.bestEpoch),self._concatSaveDir("best.pth"))
