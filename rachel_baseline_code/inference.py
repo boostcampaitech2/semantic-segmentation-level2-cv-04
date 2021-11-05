@@ -68,8 +68,6 @@ def main(args):
     model.load_state_dict(checkpoint)
 
     model = model.to(device)
-    # 추론을 실행하기 전에는 반드시 설정 (batch normalization, dropout 를 평가 모드로 설정)
-    # model.eval()
 
     # sample_submisson.csv 열기
     submission = pd.read_csv(

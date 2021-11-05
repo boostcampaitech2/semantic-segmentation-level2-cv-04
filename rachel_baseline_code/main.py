@@ -32,11 +32,14 @@ def main(args):
 
     dataset_path = '../input/data'
 
+    # create an annotation dataframe
     sorted_df = annotation(dataset_path)
 
+    # create dataloaders
     train_loader, val_loader, _ = create_dataloader(args.transform, args.batch_size, args.train_path, args.valid_path)
 
     # model 정의
+    # is_aux: with auxiliary or not (bool)
     model, is_aux = seg_model(args.model)
 
     # Loss function 정의
@@ -72,6 +75,7 @@ def main(args):
     with open(f"{saved_dir}/config.yaml", 'w') as file:
         yaml.dump(dict_file, file)
 
+    # wandb login
     if args.wandb:
         WandBMethod.login(args, model, criterion)
 

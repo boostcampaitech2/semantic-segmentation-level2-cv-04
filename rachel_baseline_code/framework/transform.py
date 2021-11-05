@@ -98,5 +98,10 @@ def transform(t_name):
                 A.Normalize(),
                 ToTensorV2(),
             ])
+    """If you want to add more options...
+
+    elif t_name == 'transformation pipeline name to use in argparser':
+        t = A.Compose([any transformations you want to use])
+    """
 
     return t

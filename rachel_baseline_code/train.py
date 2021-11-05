@@ -24,8 +24,10 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_s
     best_loss = 9999999
     best_mIoU = 0
 
+    # mixed-precision
     scaler = GradScaler(enabled=True)
 
+    # set up tqdm
     mainPbar = TQDM.makeMainProcessBar(num_epochs)
 
     for epoch in mainPbar:
@@ -47,7 +49,7 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_s
 
             with autocast(True):
                 if is_aux:
-                    outputs, labels = model(images)
+                    outputs, _ = model(images)
                 else:
                     outputs = model(images)
                 loss = criterion(outputs, masks)
@@ -73,6 +75,7 @@ def train(num_epochs, model, data_loader, val_loader, criterion, optimizer, lr_s
                 logger.debug(
                     f'Epoch [{epoch+1}/{num_epochs}], Step [{step+1}/{len(data_loader)}], Loss: {round(loss.item(),4)}, mIoU: {round(mIoU,4)}')
             
+            # logging to wandb
             if doWandb:
                 WandBMethod.trainLog(loss, acc, lr_scheduler.get_last_lr())
 
@@ -116,7 +119,7 @@ def validation(epoch, model, data_loader, criterion, saved_dir, device, sorted_d
             model = model.to(device)
             
             if is_aux:
-                outputs, labels = model(images)
+                outputs, _ = model(images)
             else:
                 outputs = model(images)
             loss = criterion(outputs, masks)

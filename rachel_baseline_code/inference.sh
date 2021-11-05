@@ -1,1 +1,1 @@
-python inference.py --yaml_path ./saved/DeepLabV3Plus_xception71_choco_frappe/config.yaml
+#python inference.py --yaml_path ./saved/DeepLabV3Plus_xception71_choco_frappe/config.yaml

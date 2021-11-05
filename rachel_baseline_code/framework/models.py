@@ -14,7 +14,7 @@ def seg_model(model_name):
             classes=11)
 
     elif model_name == 'DeepLabV3Plus_xception71_aux':
-        is_aux=True
+        is_aux = True
         aux_params = dict(
             pooling='avg',             # one of 'avg', 'max'
             dropout=0.5,               # dropout ratio, default is None
@@ -27,5 +27,11 @@ def seg_model(model_name):
             in_channels=3,
             classes=11,
             aux_params=aux_params)
+
+    """If you want to add more options...
+
+    elif model_name == 'model name to use in argparser':
+        model = any model you want to use
+    """
 
     return model, is_aux

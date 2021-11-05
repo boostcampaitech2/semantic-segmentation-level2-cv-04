@@ -2,28 +2,45 @@ import math
 from torch.optim.lr_scheduler import _LRScheduler
 import torch.optim as optim
 
+
 def seg_scheduler(args, optimizer):
     if args.scheduler == 'cosine':
-            lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=1600, eta_min=0.00001)
+        lr_scheduler = optim.lr_scheduler.CosineAnnealingLR(
+            optimizer, T_max=1600, eta_min=0.00001)
     elif args.scheduler == 'step':
-        lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1000, gamma=0.5)
+        lr_scheduler = optim.lr_scheduler.StepLR(
+            optimizer, step_size=1000, gamma=0.5)
     elif args.scheduler == 'oneCycle':
-        lr_scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.001, 
-                                                steps_per_epoch=160, epochs=args.num_epochs, anneal_strategy='cos')
+        lr_scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.001,
+                                                     steps_per_epoch=160, epochs=args.num_epochs, anneal_strategy='cos')
     elif args.scheduler == 'cosWarm':
-        lr_scheduler = CosineAnnealingWarmUpRestarts(optimizer, T_0=1600, T_mult=1, eta_max=0.0001, T_up=100, gamma=0.6)
-    
+        lr_scheduler = CosineAnnealingWarmUpRestarts(
+            optimizer, T_0=1600, T_mult=1, eta_max=0.0001, T_up=100, gamma=0.6)
+    """If you want to add more options...
+
+    elif opt_name == 'optimizer name to use in argparser':
+        opt = any optimizer you want to use
+    """
+
     return lr_scheduler
 
+
+"""
+Customized CosineAnnealingWarmUpRestarts 
+from https://gaussian37.github.io/dl-pytorch-lr_scheduler/
+"""
 
 class CosineAnnealingWarmUpRestarts(_LRScheduler):
     def __init__(self, optimizer, T_0, T_mult=1, eta_max=0.1, T_up=0, gamma=1., last_epoch=-1):
         if T_0 <= 0 or not isinstance(T_0, int):
-            raise ValueError("Expected positive integer T_0, but got {}".format(T_0))
+            raise ValueError(
+                "Expected positive integer T_0, but got {}".format(T_0))
         if T_mult < 1 or not isinstance(T_mult, int):
-            raise ValueError("Expected integer T_mult >= 1, but got {}".format(T_mult))
+            raise ValueError(
+                "Expected integer T_mult >= 1, but got {}".format(T_mult))
         if T_up < 0 or not isinstance(T_up, int):
-            raise ValueError("Expected positive integer T_up, but got {}".format(T_up))
+            raise ValueError(
+                "Expected positive integer T_up, but got {}".format(T_up))
         self.T_0 = T_0
         self.T_mult = T_mult
         self.base_eta_max = eta_max
@@ -33,8 +50,9 @@ class CosineAnnealingWarmUpRestarts(_LRScheduler):
         self.gamma = gamma
         self.cycle = 0
         self.T_cur = last_epoch
-        super(CosineAnnealingWarmUpRestarts, self).__init__(optimizer, last_epoch)
-    
+        super(CosineAnnealingWarmUpRestarts, self).__init__(
+            optimizer, last_epoch)
+
     def get_lr(self):
         if self.T_cur == -1:
             return self.base_lrs
@@ -58,17 +76,19 @@ class CosineAnnealingWarmUpRestarts(_LRScheduler):
                     self.T_cur = epoch % self.T_0
                     self.cycle = epoch // self.T_0
                 else:
-                    n = int(math.log((epoch / self.T_0 * (self.T_mult - 1) + 1), self.T_mult))
+                    n = int(
+                        math.log((epoch / self.T_0 * (self.T_mult - 1) + 1), self.T_mult))
                     self.cycle = n
-                    self.T_cur = epoch - self.T_0 * (self.T_mult ** n - 1) / (self.T_mult - 1)
+                    self.T_cur = epoch - self.T_0 * \
+                        (self.T_mult ** n - 1) / (self.T_mult - 1)
                     self.T_i = self.T_0 * self.T_mult ** (n)
             else:
                 self.T_i = self.T_0
                 self.T_cur = epoch
-                
+
         self.eta_max = self.base_eta_max * (self.gamma**self.cycle)
         self.last_epoch = math.floor(epoch)
         for param_group, lr in zip(self.optimizer.param_groups, self.get_lr()):
             param_group['lr'] = lr
-        
+
         self._last_lr = [group['lr'] for group in self.optimizer.param_groups]

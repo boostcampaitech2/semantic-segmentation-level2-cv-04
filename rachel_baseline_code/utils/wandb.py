@@ -21,7 +21,10 @@ class WandBMethod:
 		randIdx = random.randint(0,len(images)-1)
 		categoryDict = {i:category for i, category in enumerate(['Background','General trash','Paper','Paper pack','Metal','Glass','Plastic','Styrofoam','Plastic bag','Battery','Clothing'])}
 		
-		# image = cls.concatImages(images)
+		"""
+		Uncomment to upload output images with gt masks to wandb for real-time observation
+		"""
+		# image = cls.concatImages(images)		
 		# output = cls.concatImages(outputs)
 		# mask = cls.concatImages(masks)
 		

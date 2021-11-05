@@ -103,15 +103,6 @@ def create_dataloader(trans, batch_size, train_path='/train_0.json', valid_path=
 
     test_transform = transform(trans)
 
-    # create own Dataset 1 (skip)
-    # validation set을 직접 나누고 싶은 경우
-    # random_split 사용하여 data set을 8:2 로 분할
-    # train_size = int(0.8*len(dataset))
-    # val_size = int(len(dataset)-train_size)
-    # dataset = CustomDataLoader(data_dir=train_path, mode='train', transform=transform)
-    # train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
-
-    # create own Dataset 2
     # train dataset
     train_dataset = CustomDataLoader(data_dir=train_path,
                                      dataset_path=dataset_path,
