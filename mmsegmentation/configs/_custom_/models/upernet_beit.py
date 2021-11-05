@@ -1,15 +1,19 @@
+'''
+Setting Base
+'''
 _base_ = [
     '../datasets/dataset.py',
     '../default_runtime.py',
     '../schedules/schedule_AdamW.py'
 ]
 
-
-# model settings
-norm_cfg = dict(type='SyncBN', requires_grad=True)
+'''
+Model Setting
+'''
+norm_cfg = dict(type='BN', requires_grad=True)
+pretrained = '/pretrain/jx_vit_base_p16_224-80ecf9dd.pth'
 model = dict(
     type='EncoderDecoder',
-    pretrained='pretrain/deit_base_patch16_224-b5f2ef4d.pth',
     backbone=dict(
         type='VisionTransformer',
         img_size=(512, 512),
@@ -23,13 +27,13 @@ model = dict(
         qkv_bias=True,
         drop_rate=0.0,
         attn_drop_rate=0.0,
-        drop_path_rate=0.1,
+        drop_path_rate=0.0,
         with_cls_token=True,
-        norm_cfg=dict(type='LN', eps=1e-6),
+        norm_cfg=dict(type='LN', eps=1e-06),
         act_cfg=dict(type='GELU'),
         norm_eval=False,
-        final_norm=True,
-        interpolate_mode='bicubic'),
+        interpolate_mode='bicubic',
+        ),
     neck=dict(
         type='MultiLevelNeck',
         in_channels=[768, 768, 768, 768],
@@ -43,7 +47,7 @@ model = dict(
         channels=512,
         dropout_ratio=0.1,
         num_classes=11,
-        norm_cfg=norm_cfg,
+        norm_cfg=dict(type='BN', requires_grad=True),
         align_corners=False,
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
@@ -56,33 +60,27 @@ model = dict(
         concat_input=False,
         dropout_ratio=0.1,
         num_classes=11,
-        norm_cfg=norm_cfg,
+        norm_cfg=dict(type='BN', requires_grad=True),
         align_corners=False,
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),
-    # model training and testing settings
     train_cfg=dict(),
-    test_cfg=dict(mode='whole'))  # yapf: disable
-
+    test_cfg=dict(mode='whole'))
 
 optimizer = dict(
-    _delete_=True,
     type='AdamW',
-    lr=0.00006,
+    lr=6e-05,
     betas=(0.9, 0.999),
     weight_decay=0.01,
     paramwise_cfg=dict(
-        custom_keys={
-            'pos_embed': dict(decay_mult=0.),
-            'cls_token': dict(decay_mult=0.),
-            'norm': dict(decay_mult=0.)
-        }))
-        
-'''
-runner = dict(type='EpochBasedRunner', max_epochs=100)
-data = dict(samples_per_gpu=10)        
-'''
+        custom_keys=dict(
+            pos_embed=dict(decay_mult=0.0),
+            cls_token=dict(decay_mult=0.0),
+            norm=dict(decay_mult=0.0))))
 
-checkpoint_config = dict(interval=5)
-runner = dict(type='EpochBasedRunner', max_epochs=200)
-data = dict(samples_per_gpu=10)
+'''
+Epoch, batchsize settings
+'''    
+checkpoint_config = dict(by_epoch=True, interval=5)
+runner = dict(type='EpochBasedRunner', max_epochs=150)
+data = dict(samples_per_gpu=8)

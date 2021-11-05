@@ -8,8 +8,8 @@
 # dataset
 input/data/*
 input/mmseg
-!input/data/image_reroute.py
-!input/data/json-filename_edit.py
+!input/data/make_json_image.py
+!input/data/make_json_mask.ipynb
 
 # baseline
 torch_dev/wandb/*
@@ -25,8 +25,17 @@ torch_dev/custom/*
 torch_dev/tempSettings/*
 
 # output
-!output/README.md
+
+baseline_code/saved
+baseline_code/submission/*
+baseline_code/wandb/*
+
 output/*
+!output/README.md
+!output/CRF.ipynb
+!output/CSV_visualize.ipynb
+!output/CSV_compare.ipynb
+
 
 # mmsegmentation
 mmsegmentation/*
@@ -34,9 +43,8 @@ mmsegmentation/*
 !mmsegmentation/configs
 mmsegmentation/configs/*
 !mmsegmentation/configs/_custom_
-!mmsegmentation/train.sh
-!mmsegmentation/visualize.sh
 !mmsegmentation/inference.ipynb
+!mmsegmentation/ensemble.ipynb
 !mmsegmentation/pretrain
 mmsegmentation/pretrain/*
 !mmsegmentation/pretrain/README.md

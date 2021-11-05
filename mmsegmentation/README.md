@@ -1,4 +1,4 @@
-Install MMSegmentation
+# Install MMSegmentation
 
 1. 가상환경 구축하기
 
@@ -32,7 +32,9 @@ MMSegmentation 설치가 완료되었다면, 필요한 파일을 가져와서 �
 
 ---
 
-MMSegmentation 사용하려면 데이터 셋 format을 먼저 바꿔야 합니다.
+# Change Dataset format
+
+MMSegmentation 사용하려면 기존의 coco format 데이터를 MMseg에서 사용하기 위해 format을 먼저 바꿔야 합니다.
 
 다음과 같이 dir을 구성해주세요
 ```
@@ -50,6 +52,18 @@ MMSegmentation 사용하려면 데이터 셋 format을 먼저 바꿔야 합니�
 ```
 
 다음 파일들을 통해서 생성 가능합니다.
-- "/input/data/image_reroute.py"
-- "/input/data/json-filename_edit.py"
-- "/baseline_code/make_mask_image.ipynb"
+- "/input/data/make_json_image.py"
+- "/input/data/make_json_mask.ipynb"
+
+---
+
+# Train 
+
+MMSegmentation을 통한 학습은 다음 script와 같이 진행합니다.
+```
+python tools/train.py {model_config.py path} --work-dir {work_dir path} --seed 42 
+```
+
+# Inference
+
+Inference.ipynb
