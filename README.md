@@ -16,7 +16,7 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 ## 🏆 LB Score
 
 - Public LB: 0.780 mIoU (6등/20팀)
-- Private LB: 0. mIoU (등/20팀)
+- Private LB: 0.760 mIoU (3등/20팀)
 
 </br>
 
