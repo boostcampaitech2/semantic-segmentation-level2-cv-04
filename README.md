@@ -73,11 +73,11 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 ## 💁‍♀️ Composition
 
 ### Used Model
-|Model|Backbone|model_dir
-|---|:---:|---|
-|UperNet|SwinL|/mmdetection|
-|PAN|SwinB|/torch_dev|
-|UperNet|ViT|/mmdetection|
+|Model|Backbone|model_dir|LB Score@public|LB Score@private|
+|---|:---:|:---:|:---:|---|
+|UperNet|SwinL|/mmdetection|0.778|0.753
+|PAN|SwinB|/torch_dev|0.752|0.737
+|UperNet|ViT|/mmdetection|0.706|0.629
 
 ### Working Directory
 ```
