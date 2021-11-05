@@ -16,7 +16,6 @@ conda activate mmseg
 conda install pytorch=1.6.0 torchvision cudatoolkit=10.1 -c pytorch
 
 pip install mmcv-full -f https://download.openmmlab.com/mmcv/dist/cu101/torch1.6.0/index.html
-
 ```
 
 3. MMSegmentation 설치
