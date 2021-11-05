@@ -82,13 +82,7 @@ Boostcourse AI Competition from [https://stages.ai/](https://stages.ai/)
 ### Working Directory
 ```
 ├──input
-|   ├──eda
-|   ├──yolov5       # dataset by yolo format
-|   └──json files   # dataset by coco format
 ├──output
-|   ├──detectron
-|   ├──mmdet
-|   └──yolov5
 ├──mmsegmentation
 └──torch_dev
 ```
